@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Visual Studio Code file
-.code-workspace
+*.code-workspace
