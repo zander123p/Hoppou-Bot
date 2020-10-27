@@ -1,4 +1,33 @@
-module.exports = (client, emoji) => {
-    // TODO: Output to log channel from database.
-    console.log(`Emoji Deleted: ${emoji}`);
+module.exports = async (client, emoji) => {
+    const { MessageEmbed } = require("discord.js");
+    const guild = await emoji.guild.ensure();
+    const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const c = emoji.guild.channels.cache.find(c => c.name === channelName);
+    if (!c) return;
+
+    const fetchedLogs = await emoji.guild.fetchAuditLogs({
+        limit: 1,
+        type: 'EMOJI_DELETE',
+    });
+
+    const channelLog = fetchedLogs.entries.first();
+
+    const me = new MessageEmbed()
+        .setColor('#db4444')
+        .setTitle('Emoji Deleted')
+        .addField('Emoji', emoji.name)
+        .setTimestamp();
+
+    if (!channelLog) return c.send(me);
+
+    const { executor, target } = channelLog;
+
+    const meU = new MessageEmbed()
+        .setColor('#db4444')
+        .setTitle('Emoji Deleted')
+        .setAuthor(executor.tag, executor.displayAvatarURL())
+        .addField('Emoji', emoji)
+        .setTimestamp();
+    
+    c.send(meU);
 };
