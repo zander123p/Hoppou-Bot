@@ -41,7 +41,7 @@ module.exports = async (client, oldChannel, newChannel) => {
             .addField('Channel', newChannel)
             .addField(`Change - Position`, `${oldChannel.rawPosition} -> ${newChannel.rawPosition}`)
             .setTimestamp();
-        c.send(meU);
+        //c.send(meU);
     }
     //TODO: Add permission override
 };

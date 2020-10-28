@@ -1,4 +1,16 @@
-module.exports = (client, member) => {
-    // TODO: Output to log channel from database.
-    console.log(`${member} Joined`);
+module.exports = async (client, member) => {
+    const { MessageEmbed } = require("discord.js");
+    const g = await member.guild.ensure();
+    const channelName = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const c = member.guild.channels.cache.find(c => c.name === channelName);
+    if (!c) return;
+
+    const me = new MessageEmbed()
+        .setColor('#70f567')
+        .setTitle('Member Joined')
+        .setAuthor(member.user.tag, member.user.displayAvatarURL())
+        .addField('Member', member.user)
+        .setTimestamp();
+    
+    c.send(me);
 };
