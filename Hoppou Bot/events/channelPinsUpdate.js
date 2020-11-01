@@ -1,8 +1,8 @@
 module.exports = async (client, channel, time) => {
     const guild = await channel.guild.ensure();
     const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    if (!channelName) return;
     const c = channel.guild.channels.cache.find(c => c.name === channelName);
-    if (!c) return;
 
     const { MessageEmbed } = require("discord.js");
     const fetchedLogs = await channel.guild.fetchAuditLogs({

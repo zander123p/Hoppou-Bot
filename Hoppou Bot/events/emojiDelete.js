@@ -2,8 +2,8 @@ module.exports = async (client, emoji) => {
     const { MessageEmbed } = require("discord.js");
     const guild = await emoji.guild.ensure();
     const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    if (!channelName) return;
     const c = emoji.guild.channels.cache.find(c => c.name === channelName);
-    if (!c) return;
 
     const fetchedLogs = await emoji.guild.fetchAuditLogs({
         limit: 1,

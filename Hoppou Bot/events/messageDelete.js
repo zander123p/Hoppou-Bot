@@ -3,8 +3,8 @@ module.exports = async (client, message) => {
     if (message.author.bot || !message.guild) return;
     const guild = await message.guild.ensure();
     const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    if (!channelName) return;
     const channel = message.guild.channels.cache.find(c => c.name === channelName);
-    if (!channel) return;
 
     const fetchedLogs = await message.guild.fetchAuditLogs({
         limit: 1,
