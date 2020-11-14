@@ -24,6 +24,9 @@ client.events = new Discord.Collection();
 fs.readdir('./events/', (err, files) => {
     if (err) return console.error;
     let index = 0;
+    // files.sort((a,b) => {
+    //     return fs.statSync('./events/' + a).birthtime - fs.statSync('./events/' + b).birthtime;
+    // });
     files.forEach(file => {
         if (!file.endsWith('.js')) return;
         const evt = require(`./events/${file}`);
@@ -34,20 +37,41 @@ fs.readdir('./events/', (err, files) => {
         client.events.set(index, evtName);
         index++;
     });
-    console.log(client.events);
 });
 
+// Designed to fill in for the MEMEBER UPDATE which doesn't fire on everything that it can be got in the logs.
+setInterval(async () => {
+    client.guilds.cache.forEach(async (guild) => {
+        const g = await guild.ensure();
+        const fetchedLogs = await guild.fetchAuditLogs({
+            limit: 1,
+            type: 'MEMBER_UPDATE',
+        });
+        const channelLog = fetchedLogs.entries.first();
+        if (!channelLog) return;
+        const { target } = channelLog;
+        let oldLog = g.oldLogs.find(c => { if(channelLog.id === c.id) return c; });
+        if (!oldLog && channelLog.changes[0].key != 'nick') {
+            let member = guild.members.cache.find(member => { if (member.id === target.id) return member; })
+            client.emit('guildMemberUpdate', member, member);
+        }
+    });
+}, 1000);
+
+// Important shit
 client.mongoose = require('./utils/mongoose');
 client.Guilds = require('./models/guild');
 client.UserProfiles = require('./models/user_profile');
 client.ActionLogs = require('./models/action_log');
 
+// Gets all directories in a path
 function getDirectories(path) {
     return fs.readdirSync(path).filter(function (file) {
       return fs.statSync(path+'/'+file).isDirectory();
     });
 }
 
+// Gets the user from their ID
 Discord.Message.prototype.getUserFromID = function(mention) {
     const matches = mention.match(/(\d+)/);
 

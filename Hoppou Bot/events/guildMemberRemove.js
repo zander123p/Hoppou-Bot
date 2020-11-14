@@ -4,7 +4,6 @@ module.exports = async (client, member) => {
     const channelName = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
     if (!channelName) return;
     const c = member.guild.channels.cache.find(c => c.name === channelName);
-    let oldLog = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).oldLog;
 
     const fetchedLogs = await member.guild.fetchAuditLogs({
         limit: 1,
@@ -20,10 +19,15 @@ module.exports = async (client, member) => {
         .addField('Member', member.user)
         .setTimestamp();
 
-    if (channelLog.id === oldLog) return c.send(me);
+    let oldLog = g.oldLogs.find(c => { if(channelLog.id === c.id) return c; });
+    if (oldLog) return c.send(me);
 
-    pos = g.settings.channels.findIndex(c => { if(c.logs.includes(module.exports.id)) return c; });
-    g.settings.channels[pos].oldLog = channelLog.id.toString();
+    pos = g.oldLogs.findIndex(c => { if(c.log === module.exports.id) return c; });
+    if (pos < 0) {
+        g.oldLogs.push({id: channelLog.id.toString(), log: module.exports.id});
+    } else {
+        g.oldLogs[pos].id = channelLog.id.toString();
+    }
     
     await g.save();
 

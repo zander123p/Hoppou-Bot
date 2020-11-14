@@ -49,6 +49,8 @@ module.exports = async (client, oldChannel, newChannel) => {
 
 function correctKey(key) {
     switch (key) {
+        case 'name':
+            return 'Name';
         case 'position':
             return 'Position';
         case 'topic':

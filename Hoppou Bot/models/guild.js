@@ -6,8 +6,9 @@ const guildSchema = mongoose.Schema({
     guildName: String,
     settings: {
         prefix: String,
-        channels: [{ name: String, logs: [Number], oldLog: String }],
+        channels: [{ name: String, logs: [Number]}],
     },
+    oldLogs: [{id: String, log: Number}],
 }, {
     typeKey: '$type'
 });
