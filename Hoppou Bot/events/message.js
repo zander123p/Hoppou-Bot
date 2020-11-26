@@ -19,7 +19,9 @@ module.exports = async (client, message) => {
 
     if (command.guildOnly && message.channel.type === 'dm') return message.reply('I can\'t execute that command inside DMs!');
 
-    if (message.guild && !message.guild.member(message.author).hasPermission(command.permissions)) return message.reply('you don\'t have the required permissions to run that command!');
+    //if (message.guild && !message.guild.member(message.author).hasPermission(command.permissions)) return message.reply('you don\'t have the required permissions to run that command!');
+    
+    if (message.guild && !await message.guild.member(message.author).hasGuildPermission(command.guildPermission)) return message.reply('you don\'t have the required permissions to run that command!');
 
     if (command.args && !args.length || args.length < command.args) {
         let reply = (args.length < command.args && args.length != 0)? `you didn't provide enough arguments!` : `you didn't provide any arguments!`;

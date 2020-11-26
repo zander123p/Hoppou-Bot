@@ -1,7 +1,11 @@
 module.exports = {
     name: 'ping',
-    description: 'Ping~!',
+    description: 'Pong~!',
     execute(message, args) {
-        message.reply(`pong with ${message.createdTimestamp - Date.now()}ms delay!`);
+        message.channel.send("Pinging...").then(m =>{
+            var ping = m.createdTimestamp - message.createdTimestamp;
+
+            m.edit(`**:ping_pong: Pong! Your Ping Is:-**\n  ${ping}ms`);
+        });
     },
 };

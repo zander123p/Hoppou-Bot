@@ -3,6 +3,7 @@ module.exports = {
     description: 'Setup a log channel with desired logs.',
     guildOnly: true,
     permissions: ['ADMINISTRATION'],
+    guildPermission: 'admin.setlog',
     args: 2,
     usage: '<log channel name> <log id>..\np!setlog #log-channel 1 2 3',
     async execute(message, args) {

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const user_profileSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     userID: String,
-    guildID: String,
     totalActions: Number,
     warnings: [String],
     kicks: [String],

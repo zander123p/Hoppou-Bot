@@ -39,7 +39,7 @@ fs.readdir('./events/', (err, files) => {
     });
 });
 
-// Designed to fill in for the MEMEBER UPDATE which doesn't fire on everything that it can be got in the logs.
+// Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be got in the logs.
 setInterval(async () => {
     client.guilds.cache.forEach(async (guild) => {
         const g = await guild.ensure();
@@ -62,6 +62,7 @@ setInterval(async () => {
 client.mongoose = require('./utils/mongoose');
 client.Guilds = require('./models/guild');
 client.UserProfiles = require('./models/user_profile');
+client.GuildUsers = require('./models/guild_user');
 client.ActionLogs = require('./models/action_log');
 
 // Gets all directories in a path
@@ -105,14 +106,13 @@ Discord.Guild.prototype.ensure = async function() {
 };
 
 // Helper function to ensure a user is in the user profile; if a user doesn't exist, add them
-Discord.GuildMember.prototype.ensure = async function() {
+Discord.User.prototype.ensure = async function() {
     const mg = require('mongoose');
     const u = await this.client.UserProfiles.findOne({userID: this.id});
     if (!u) {
         const user = new this.client.UserProfiles({
             _id: mg.Types.ObjectId(),
             userID: this.id,
-            guildID: this.guild.id,
             totalActions: 0,
             warnings: [],
             kicks: [],
@@ -124,6 +124,44 @@ Discord.GuildMember.prototype.ensure = async function() {
         return u;
     }
 };
+
+Discord.GuildMember.prototype.ensure = async function() {
+    const mg = require('mongoose');
+    const u = await this.client.GuildUsers.findOne({userID: this.id, guildID: this.guild.id});
+    if (!u) {
+        const user = new this.client.GuildUsers({
+            _id: mg.Types.ObjectId(),
+            guildID: this.guild.id,
+            userID: this.id,
+            permissionGroups: [],
+        });
+
+        user.save().catch(err => console.err(err));
+        return user;
+    } else {
+        return u;
+    }
+}
+
+Discord.GuildMember.prototype.hasGuildPermission = async function(permission) {
+    if (!permission || this.guild.owner === this)
+        return true;
+
+    const user = await this.ensure();
+    const guild = await this.guild.ensure();
+
+    let hasPerms = false;
+    guild.permissionGroups.forEach(group => {
+        if (user.permissionGroups.includes(group.name)) {
+            if (group.permissions.includes('*')) hasPerms = true;
+            if (group.permissions.includes(permission) || (group.permissions.includes(permission.split('.')[0] + '.*'))) {
+                hasPerms = true;
+            }
+        }
+    });
+
+    return hasPerms;
+}
 
 client.mongoose.init(); // Init database shit
 client.login(process.env.TOKEN); // Do I even need to?

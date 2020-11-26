@@ -3,6 +3,7 @@ module.exports = {
     description: 'Reset any log ids supplied.',
     guildOnly: true,
     permissions: ['ADMINISTRATION'],
+    guildPermission: 'admin.resetlog',
     args: 1,
     usage: '<log id>..\np!setlog 1 2 3',
     async execute(message, args) {

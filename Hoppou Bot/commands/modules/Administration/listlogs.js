@@ -3,6 +3,7 @@ module.exports = {
     description: 'List all log ids; active log ids will be shown as such.',
     guildOnly: true,
     permissions: ['ADMINISTRATION'],
+    guildPermission: 'admin.listlogs',
     usage: 'p!setlog',
     async execute(message, args) {
         const guild = await message.guild.ensure();
