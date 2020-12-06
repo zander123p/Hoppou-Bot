@@ -105,3 +105,7 @@ dist
 
 # Visual Studio Code file
 *.code-workspace
+
+# Templates
+.templates/
+template.config.js
