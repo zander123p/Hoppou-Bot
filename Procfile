@@ -1,1 +1,1 @@
-worker: node Hoppou Bot/app.js
+worker: node "Hoppou Bot/app.js"
