@@ -73,14 +73,23 @@ function getDirectories(path) {
 }
 
 // Gets the user from their ID
-Discord.Message.prototype.getUserFromID = function(mention) {
-    const matches = mention.match(/(\d+)/);
+Discord.Message.prototype.getUserFromID = async function(mention) {
+    const matches = await mention.match(/(\d+)/);
 
-    if (!matches) return;
+    if (!matches) {
+        this.reply('please mention or use an id of a valid user.');
+        return;
+    }
 
     const id = matches[1];
 
-    return this.client.users.cache.get(id);
+    let user = this.client.users.cache.get(id);
+    if (user) {
+        return user;
+    } else {
+        this.reply('please mention or use an id of a valid user.');
+        return;
+    }
 };
 
 // Helper function to ensure a guild is in the guils database; if a guild doesn't exist, add it
@@ -149,6 +158,7 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission) {
 
     const user = await this.ensure();
     const guild = await this.guild.ensure();
+    permission = permission.toLowerCase();
 
     let hasPerms = false;
     guild.permissionGroups.forEach(group => {
