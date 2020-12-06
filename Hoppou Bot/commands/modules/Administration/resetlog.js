@@ -5,7 +5,7 @@ module.exports = {
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.resetlog',
     args: 1,
-    usage: '<log id>..\np!setlog 1 2 3',
+    usage: '<log id>',
     async execute(message, args) {
         const logs = args.map(x => +x);
         const guild = await message.guild.ensure();
@@ -16,9 +16,13 @@ module.exports = {
                     c.logs.splice(c.logs.indexOf(l), 1);
                 }
             });
+            if (c.logs.length === 0) {
+                guild.settings.channels.splice(guild.settings.channels.indexOf(c), 1);
+            }
         });
 
         await guild.save();
-        message.channel.send(`I've reset the log id(s): '${logs}'`);
+        // message.channel.send(`I've reset the log id(s): '${logs}'`);
+        message.react('✅');
     }
 }

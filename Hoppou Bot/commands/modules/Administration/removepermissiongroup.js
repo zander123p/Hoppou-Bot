@@ -1,11 +1,12 @@
 module.exports = {
     name: 'removepermissiongroup',
-    description: 'Remove a new permission group',
+    description: 'Remove a permission group',
     guildOnly: true,
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.removegroup',
     aliases: ['removepermgroup', 'removegroup'],
-    usage: 'p!removepermissiongroup <name>\np!addpermissiongroup admin admin.addgroup admin.removegroup admin.addperm',
+    args: 1,
+    usage: '<name>',
     async execute(message, args) {
         const name = args[0]; // Name
 
@@ -27,6 +28,7 @@ module.exports = {
         });
         await guild.save();
 
-        message.reply(`removed the group, '${name}'!`)
+        // message.reply(`removed the group, '${name}'!`)
+        message.react('✅');
     }
 }

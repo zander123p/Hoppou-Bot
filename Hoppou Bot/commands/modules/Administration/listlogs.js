@@ -4,7 +4,6 @@ module.exports = {
     guildOnly: true,
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.listlogs',
-    usage: 'p!setlog',
     async execute(message, args) {
         const guild = await message.guild.ensure();
         // let list = message.client.events.map(c => { return c.logs.map(l => { return l.toString() + '\n'; }).toString(); });

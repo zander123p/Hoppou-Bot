@@ -5,7 +5,8 @@ module.exports = {
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.removeperms',
     aliases: ['removeperms'],
-    usage: 'p!removepermissions <name> [permissions]\np!removepermissions admin admin.addgroup admin.removegroup admin.addperm',
+    args: 2,
+    usage: '<name> <permissions>',
     async execute(message, args) {
         const name = args[0]; // Name
         const perms = args.slice(1); // Permissions
@@ -30,6 +31,7 @@ module.exports = {
         });
         await guild.save();
 
-        message.reply(`removed the permissions, '${perms.map(x => (perms.length > 1)? `${x}, ` : `${x}`)}' from the group, '${name}'!`)
+        // message.reply(`removed the permissions, '${perms.map(x => (perms.length > 1)? `${x}, ` : `${x}`)}' from the group, '${name}'!`);
+        message.react('✅');
     }
 }

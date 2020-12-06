@@ -5,7 +5,8 @@ module.exports = {
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.addgroup',
     aliases: ['addpermgroup', 'addgroup'],
-    usage: 'p!addpermissiongroup <name> [permissions]\np!addpermissiongroup admin admin.addgroup admin.removegroup admin.addperm',
+    args: 1,
+    usage: '<name> [permissions]',
     async execute(message, args) {
         const name = args[0]; // Name
         const perms = args.slice(1); // Permissions
@@ -24,6 +25,7 @@ module.exports = {
         guild.permissionGroups.push({name, permissions: (perms)? perms : []});
         await guild.save();
 
-        message.reply(`added the group, '${name}'!`)
+        // message.reply(`added the group, '${name}'!`);
+        message.react('✅');
     }
 }

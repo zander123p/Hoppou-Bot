@@ -4,7 +4,8 @@ module.exports = {
     guildOnly: true,
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.addusergroup',
-    usage: 'p!addusergroup <user> [groups]\np!addusergroup @zander123p admin mod',
+    args: 2,
+    usage: '<user> <groups>',
     async execute(message, args) {
         const user = message.guild.members.cache.get(message.getUserFromID(args[0]).id); // User
         const groups = args.slice(1); // Groups
@@ -16,6 +17,7 @@ module.exports = {
         u.permissionGroups = u.permissionGroups.concat(groups);
         await u.save();
 
-        message.reply(`added ${user} to the group(s), '${groups.map(x => (groups.length > 1)? `${x}, ` : `${x}`)}'!`)
+        // message.reply(`added ${user} to the group(s), '${groups.map(x => (groups.length > 1)? `${x}, ` : `${x}`)}'!`);
+        message.react('✅');
     }
 }

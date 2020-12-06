@@ -5,7 +5,7 @@ module.exports = {
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.setlog',
     args: 2,
-    usage: '<log channel name> <log id>..\np!setlog #log-channel 1 2 3',
+    usage: '<log channel name> <log id>',
     async execute(message, args) {
         const c = args[0].match(/^<#!?(\d+)>$/)[1]; // Match for #channel-name
         const logs = args.slice(1).map(x => +x); // Anything else
@@ -25,7 +25,7 @@ module.exports = {
 
         if (!chnl) {
             chnl = {};
-            chnl.name = channel.name;
+            chnl.name = channel.id;
             chnl.logs = logs;
             guild.settings.channels.push(chnl);
         } else {
@@ -38,7 +38,8 @@ module.exports = {
 
         await guild.save();
 
-        pos = guild.settings.channels.map(e => { return e.name; }).indexOf(chnl.name);
-        message.channel.send(`Added channel: '${channel}' for log id(s): '${guild.settings.channels[pos].logs.map(x=>x.toString()+' ')}'.`);
+        // pos = guild.settings.channels.map(e => { return e.name; }).indexOf(chnl.name);
+        // message.channel.send(`Added channel: '${channel}' for log id(s): '${guild.settings.channels[pos].logs.map(x=>x.toString()+' ')}'.`);
+        message.react('✅');
     }
 }

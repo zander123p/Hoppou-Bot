@@ -5,7 +5,8 @@ module.exports = {
     permissions: ['ADMINISTRATION'],
     guildPermission: 'admin.addperms',
     aliases: ['addperms'],
-    usage: 'p!addpermissions <name> [permissions]\np!addpermissions admin admin.addgroup admin.removegroup admin.addperm',
+    args: 2,
+    usage: '<name> <permissions>',
     async execute(message, args) {
         const name = args[0]; // Name
         const perms = args.slice(1); // Permissions
@@ -26,6 +27,7 @@ module.exports = {
         guild.permissionGroups.find(g => { if (g.name === name) return g; }).permissions = guild.permissionGroups.find(g => { if (g.name === name) return g; }).permissions.concat(perms);
         await guild.save();
 
-        message.reply(`added the permissions, '${perms.map(x => (perms.length > 1)? `${x}, ` : `${x}`)}' to the group, '${name}'!`)
+        // message.reply(`added the permissions, '${perms.map(x => (perms.length > 1)? `${x}, ` : `${x}`)}' to the group, '${name}'!`);
+        message.react('✅');
     }
 }
