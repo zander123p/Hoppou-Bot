@@ -1,1 +1,1 @@
-worker: node "Hoppou Bot/app.js"
+worker: cd "Hoppou Bot"; node "app.js"
