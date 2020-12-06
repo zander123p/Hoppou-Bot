@@ -1,9 +1,10 @@
 module.exports = async (client, guild, user) => {
     const { MessageEmbed } = require("discord.js");
     const g = await guild.ensure();
-    const channelName = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    const channelName = chnl.name;
     if (!channelName) return;
-    const c = guild.channels.cache.find(c => c.name === channelName);
+    const c = guild.channels.cache.get(channelName);
 
     const fetchedLogs = await guild.fetchAuditLogs({
         limit: 1,

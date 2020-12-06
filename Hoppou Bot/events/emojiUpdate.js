@@ -1,9 +1,10 @@
 module.exports = async (client, oldEmoji, newEmoji) => {
     const { MessageEmbed } = require("discord.js");
     const guild = await oldEmoji.guild.ensure();
-    const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    const channelName = chnl.name;
     if (!channelName) return;
-    const c = oldEmoji.guild.channels.cache.find(c => c.name === channelName);
+    const c = oldEmoji.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await oldEmoji.guild.fetchAuditLogs({
         limit: 1,

@@ -2,9 +2,10 @@ module.exports = async (client, message) => {
     const { MessageEmbed } = require("discord.js");
     if (message.author.bot || !message.guild) return;
     const guild = await message.guild.ensure();
-    const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    const channelName = chnl.name;
     if (!channelName) return;
-    const channel = message.guild.channels.cache.find(c => c.name === channelName);
+    const c = message.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await message.guild.fetchAuditLogs({
         limit: 1,
@@ -16,12 +17,25 @@ module.exports = async (client, message) => {
     const me = new MessageEmbed()
         .setColor('#db4444')
         .setTitle('Message Deleted')
+        .setAuthor(message.author.tag, message.author.displayAvatarURL())
         .addField('Channel', message.channel)
         .addField('Message', message)
         .addField('Jump To Message',`https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`)
         .setTimestamp();
 
-    if (!deletionLog) return channel.send(me);
+    if (!deletionLog) return c.send(me);
+
+    let oldLog = guild.oldLogs.find(c => { if(deletionLog.id === c.id) return c; });
+    if (oldLog) return c.send(me);
+
+    pos = guild.oldLogs.findIndex(c => { if(c.log === module.exports.id) return c; });
+    if (pos < 0) {
+        guild.oldLogs.push({id: deletionLog.id.toString(), log: module.exports.id});
+    } else {
+        guild.oldLogs[pos].id = deletionLog.id.toString();
+    }
+    
+    await guild.save();
 
     const { executor, target } = deletionLog;
 
@@ -34,5 +48,5 @@ module.exports = async (client, message) => {
         .addField('Jump To Message',`https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`)
         .setTimestamp();
     
-    channel.send(meU);
+    c.send(meU);
 };

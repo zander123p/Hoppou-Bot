@@ -2,9 +2,10 @@ module.exports = async (client, oldMessage, newMessage) => {
     const { MessageEmbed } = require("discord.js");
     if (oldMessage.author.bot || !oldMessage.guild) return;
     const guild = await oldMessage.guild.ensure();
-    const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    const channelName = chnl.name;
     if (!channelName) return;
-    const channel = oldMessage.guild.channels.cache.find(c => c.name === channelName);
+    const c = oldMessage.guild.channels.cache.get(channelName);
 
     const me = new MessageEmbed()
         .setColor('#faea70')

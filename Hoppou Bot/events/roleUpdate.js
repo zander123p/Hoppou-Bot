@@ -1,9 +1,10 @@
 module.exports = async (client, oldRole, newRole) => {
     const { MessageEmbed } = require("discord.js");
     const guild = await oldRole.guild.ensure();
-    const channelName = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; }).name;
+    const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    const channelName = chnl.name;
     if (!channelName) return;
-    const c = oldRole.guild.channels.cache.find(c => c.name === channelName);
+    const c = oldRole.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await oldRole.guild.fetchAuditLogs({
         limit: 1,
