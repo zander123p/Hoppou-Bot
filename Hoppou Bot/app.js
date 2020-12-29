@@ -77,7 +77,6 @@ Discord.Message.prototype.getUserFromID = async function(mention) {
     const matches = await mention.match(/(\d+)/);
 
     if (!matches) {
-        this.reply('please mention or use an id of a valid user.');
         return;
     }
 
@@ -86,9 +85,6 @@ Discord.Message.prototype.getUserFromID = async function(mention) {
     let user = this.client.users.cache.get(id);
     if (user) {
         return user;
-    } else {
-        this.reply('please mention or use an id of a valid user.');
-        return;
     }
 };
 
