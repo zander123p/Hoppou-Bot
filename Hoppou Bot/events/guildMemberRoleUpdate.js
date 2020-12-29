@@ -1,7 +1,7 @@
 module.exports = async (client, oldMember, newMember) => {
     const { MessageEmbed } = require("discord.js");
     const guild = await oldMember.guild.ensure();
-    const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
     const channelName = chnl.name;
     if (!channelName) return;
     const c = oldMember.guild.channels.cache.get(channelName);
