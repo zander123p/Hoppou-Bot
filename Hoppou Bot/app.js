@@ -64,6 +64,7 @@ client.Guilds = require('./models/guild');
 client.UserProfiles = require('./models/user_profile');
 client.GuildUsers = require('./models/guild_user');
 client.ActionLogs = require('./models/action_log');
+client.MuteLogs = require('./models/mute_log');
 
 // Gets all directories in a path
 function getDirectories(path) {

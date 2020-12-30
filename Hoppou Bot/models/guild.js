@@ -7,6 +7,7 @@ const guildSchema = mongoose.Schema({
     settings: {
         prefix: String,
         channels: [{ name: String, logs: [Number]}],
+        muteRole: String,
     },
     oldLogs: [{id: String, log: Number}],
     permissionGroups: [{name: String, permissions: [String]}],
