@@ -4,7 +4,7 @@ module.exports = {
     name: 'showactions',
     description: 'Shows the moderation actions taken on the user provided.',
     guildOnly: true,
-    permissions: ['KICK_MEMBERS'],
+    guildPermission: 'mod.check',
     aliases: ['sa'],
     args: 1,
     usage: '<user> [warnings or kicks]',
