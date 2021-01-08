@@ -1,0 +1,35 @@
+{
+  "name": "hoppou-bot",
+  "version": "1.0.0",
+  "description": "A bot to manage hoppou related discord servers",
+  "main": "\"Hoppou Bot/app.js\"",
+  "dependencies": {
+    "discord.js": "^12.3.1",
+    "dotenv": "^8.2.0",
+    "moment": "^2.29.1",
+    "mongoose": "^5.10.10",
+    "nodemon": "^2.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "cd \"Hoppou Bot\" && nodemon app.js "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zander123p/Hoppou-Bot.git"
+  },
+  "keywords": [
+    "Hoppou",
+    "Bot",
+    "Discord",
+    "Hoppou",
+    "Bot",
+    "VRChat"
+  ],
+  "author": "Sakura",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zander123p/Hoppou-Bot/issues"
+  },
+  "homepage": "https://github.com/zander123p/Hoppou-Bot#readme"
+}

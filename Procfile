@@ -1,0 +1,1 @@
+worker: cd "Hoppou Bot"; node "app.js"
