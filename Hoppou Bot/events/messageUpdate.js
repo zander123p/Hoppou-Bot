@@ -11,10 +11,11 @@ module.exports = async (client, oldMessage, newMessage) => {
         .setColor('#faea70')
         .setTitle('Message Updated')
         .setAuthor(oldMessage.author.tag, oldMessage.author.displayAvatarURL())
+        .addField('Message Author', oldMessage.author)
         .addField('Channel', oldMessage.channel)
         .addField('Message', `${oldMessage} -> ${newMessage}`)
-        .addField('Jump To Message',`https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`)
+        .addField(`Jump to message`,`[Jump](https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id})`)
         .setTimestamp();
 
-    channel.send(me);
+    c.send(me);
 };

@@ -18,9 +18,10 @@ module.exports = async (client, message) => {
         .setColor('#db4444')
         .setTitle('Message Deleted')
         .setAuthor(message.author.tag, message.author.displayAvatarURL())
+        .addField('Message Author', message.author)
         .addField('Channel', message.channel)
         .addField('Message', message)
-        .addField('Jump To Message',`https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`)
+        .addField(`Jump to message`,`[Jump](https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`)
         .setTimestamp();
 
     if (!deletionLog) return c.send(me);
@@ -43,9 +44,10 @@ module.exports = async (client, message) => {
         .setColor('#db4444')
         .setTitle('Message Deleted')
         .setAuthor(executor.tag, executor.displayAvatarURL())
+        .addField('Message Author', message.author)
         .addField('Channel', message.channel)
         .addField('Message', message)
-        .addField('Jump To Message',`https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`)
+        .addField(`Jump to message`,`[Jump](https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`)
         .setTimestamp();
     
     c.send(meU);
