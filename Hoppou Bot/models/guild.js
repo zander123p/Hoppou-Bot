@@ -10,7 +10,7 @@ const guildSchema = mongoose.Schema({
         muteRole: String,
     },
     oldLogs: [{id: String, log: Number}],
-    permissionGroups: [{name: String, permissions: [String]}],
+    permissionGroups: [{name: String, permissions: [String], role: String}],
 }, {
     typeKey: '$type'
 });

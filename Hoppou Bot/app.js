@@ -149,9 +149,29 @@ Discord.GuildMember.prototype.ensure = async function() {
     }
 }
 
-Discord.GuildMember.prototype.hasGuildPermission = async function(permission) {
+Discord.GuildMember.prototype.hasGuildPermission = async function(permission, role = true) {
     if (!permission || this.guild.owner === this)
         return true;
+
+    if (role) {
+        permission = permission.toLowerCase();
+        const guild = await this.guild.ensure();
+
+        let hasPerms = false;
+
+        const roles = this.roles.cache;
+        roles.forEach(r => {
+            const group = guild.permissionGroups.find(g => g.role === r.id)
+            if(group) {
+                if (group.permissions.includes('*')) hasPerms = true;
+                if (group.permissions.includes(permission) || (group.permissions.includes(permission.split('.')[0] + '.*'))) {
+                    hasPerms = true;
+                }
+            }
+        });
+
+        return hasPerms;
+    }
 
     const user = await this.ensure();
     const guild = await this.guild.ensure();
