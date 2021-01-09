@@ -21,7 +21,6 @@ module.exports = async (client, oldRole, newRole) => {
     if (!channelLog) return c.send(me);
 
     const { executor, changes } = channelLog;
-    console.log(channelLog);
     changes.forEach(change => {
         if(change.key === 'name') {
             let meU = new MessageEmbed()
