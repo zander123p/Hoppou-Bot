@@ -1,4 +1,5 @@
 module.exports = async (client, channel, time) => {
+    if (channel.type === 'dm') return;
     const guild = await channel.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
     const channelName = chnl.name;
