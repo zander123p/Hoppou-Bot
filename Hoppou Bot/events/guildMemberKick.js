@@ -28,7 +28,7 @@ module.exports = async (client, member) => {
         .setTitle('Member Kicked')
         .setAuthor(executor.tag, executor.displayAvatarURL())
         .addField('Member', member.user)
-        .addField('Rason', channelLog.reason)
+        .addField('Reason', channelLog.reason)
         .setTimestamp();    
 
     c.send(meU);
