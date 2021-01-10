@@ -8,9 +8,9 @@ module.exports = {
     usage: '<log channel name> <log id>',
     async execute(message, args) {
         const c = args[0].match(/^<#!?(\d+)>$/)[1]; // Match for #channel-name
-        const logs = args.slice(1).map(x => +x); // Anything else
+        const logs = args.slice(1).map(x => message.client.events.get(+x)); // Anything else
         const channel = message.guild.channels.cache.get(c); // Channel
-        
+
         if (!channel)
             return message.reply(`please mention the channel you wish to use.`);
 

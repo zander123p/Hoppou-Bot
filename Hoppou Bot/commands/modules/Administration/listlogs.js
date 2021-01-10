@@ -15,7 +15,7 @@ module.exports = {
         });
         let list = '';
         Array.from(message.client.events.keys()).forEach(k => {
-            if (activeLogs.includes(k)) {
+            if (activeLogs.includes(message.client.events.get(k))) {
                 list += k + ': ' + message.client.events.get(k) + '|ACTIVE\n';
             } else {
                 list += k + ': ' + message.client.events.get(k) + '\n';

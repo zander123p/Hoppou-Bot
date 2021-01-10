@@ -33,7 +33,7 @@ fs.readdir('./events/', (err, files) => {
         let evtName = file.split('.')[0];
         console.log(`Loaded Event: '${evtName}'`);
         client.on(evtName, evt.bind(null, client));
-        evt.id = index;
+        evt.id = evtName;
         client.events.set(index, evtName);
         index++;
     });

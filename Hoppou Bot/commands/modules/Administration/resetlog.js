@@ -7,7 +7,7 @@ module.exports = {
     args: 1,
     usage: '<log id>',
     async execute(message, args) {
-        const logs = args.map(x => +x);
+        const logs = args.slice(0).map(x => message.client.events.get(+x)); // Anything else
         const guild = await message.guild.ensure();
         
         guild.settings.channels.forEach(c => {
