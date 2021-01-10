@@ -8,6 +8,7 @@ module.exports = {
     args: 2,
     usage: '<user> [d]/[h]/[m]',
     async execute(message, args) {
+        args[1] = args[1].toLowerCase();
         const g = await message.guild.ensure();
         if (!g.settings.muteRole) {
             message.reply('a mute role needs to be assigned first!').then(msg => msg.delete({ timeout: 5000 }));
