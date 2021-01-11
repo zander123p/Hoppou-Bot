@@ -4,7 +4,7 @@ module.exports = async (client, member) => {
     const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
     const channelName = chnl.name;
     if (!channelName) return;
-    const c = user.guild.channels.cache.get(channelName);
+    const c = member.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await member.guild.fetchAuditLogs({
         limit: 1,
@@ -28,6 +28,7 @@ module.exports = async (client, member) => {
         .setTitle('Member Kicked')
         .setAuthor(executor.tag, executor.displayAvatarURL())
         .addField('Member', member.user)
+        .addField('Reason', channelLog.reason)
         .setTimestamp();    
 
     c.send(meU);

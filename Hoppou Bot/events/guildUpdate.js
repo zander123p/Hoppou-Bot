@@ -4,7 +4,7 @@ module.exports = async (client, oldGuild, newGuild) => {
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
     const channelName = chnl.name;
     if (!channelName) return;
-    const c = oldGuild.guild.channels.cache.get(channelName);
+    const c = newGuild.channels.cache.get(channelName);
 
     const fetchedLogs = await oldGuild.fetchAuditLogs({
         limit: 1,

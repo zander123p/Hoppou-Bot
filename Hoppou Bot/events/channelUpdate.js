@@ -1,5 +1,6 @@
 module.exports = async (client, oldChannel, newChannel) => {
     const { MessageEmbed } = require("discord.js");
+    if (oldChannel.type === 'dm') return;
     const guild = await oldChannel.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
     const channelName = chnl.name;

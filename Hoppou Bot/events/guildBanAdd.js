@@ -28,6 +28,7 @@ module.exports = async (client, guild, user) => {
         .setTitle('Member Banned')
         .setAuthor(executor.tag, executor.displayAvatarURL())
         .addField('Member', user)
+        .addField('Reason', channelLog.reason)
         .setTimestamp();
     
     c.send(meU);
