@@ -7,6 +7,14 @@ module.exports = {
     args: 1,
     usage: '<log id>',
     async execute(message, args) {
+        if (args[0].toLowerCase() === 'all') {
+            const guild = await message.guild.ensure();
+            guild.settings.channels.splice(0, guild.settings.channels.length);
+
+            await guild.save();
+            return message.react('✅');
+        }
+
         const logs = args.slice(0).map(x => message.client.events.get(+x)); // Anything else
         const guild = await message.guild.ensure();
         
