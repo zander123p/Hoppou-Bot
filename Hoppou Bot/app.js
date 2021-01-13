@@ -39,24 +39,24 @@ fs.readdir('./events/', (err, files) => {
     });
 });
 
-// Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be got in the logs.
-setInterval(async () => {
-    client.guilds.cache.forEach(async (guild) => {
-        const g = await guild.ensure();
-        const fetchedLogs = await guild.fetchAuditLogs({
-            limit: 1,
-            type: 'MEMBER_UPDATE',
-        });
-        const channelLog = fetchedLogs.entries.first();
-        if (!channelLog) return;
-        const { target } = channelLog;
-        let oldLog = g.oldLogs.find(c => { if(channelLog.id === c.id) return c; });
-        if (!oldLog && channelLog.changes[0].key != 'nick') {
-            let member = guild.members.cache.find(member => { if (member.id === target.id) return member; })
-            client.emit('guildMemberUpdate', member, member);
-        }
-    });
-}, 1000);
+// // Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be got in the logs.
+// setInterval(async () => {
+//     client.guilds.cache.forEach(async (guild) => {
+//         const g = await guild.ensure();
+//         const fetchedLogs = await guild.fetchAuditLogs({
+//             limit: 1,
+//             type: 'MEMBER_UPDATE',
+//         });
+//         const channelLog = fetchedLogs.entries.first();
+//         if (!channelLog) return;
+//         const { target } = channelLog;
+//         let oldLog = g.oldLogs.find(c => { if(channelLog.id === c.id) return c; });
+//         if (!oldLog && channelLog.changes[0].key != 'nick') {
+//             let member = guild.members.cache.find(member => { if (member.id === target.id) return member; })
+//             client.emit('guildMemberUpdate', member, member);
+//         }
+//     });
+// }, 1000);
 
 // Important shit
 client.mongoose = require('./utils/mongoose');
