@@ -1,5 +1,6 @@
 module.exports = async (client, message) => {
     if (message.author.bot) return; // Check not self or bot
+    const user = await message.guild.members.cache.get(message.author.id).ensure();
     let prefix;
     if (message.guild) {
         const g = await message.guild.ensure();
@@ -8,9 +9,12 @@ module.exports = async (client, message) => {
         prefix = process.env.PREFIX;
     }
 
-    const user = await message.guild.members.cache.get(message.author.id).ensure();
     user.messages = user.messages + 1;
-    await user.save();
+    try {
+        await user.save();
+    } catch {
+        
+    }
 
     if (!message.content.startsWith(prefix)) return;
 
