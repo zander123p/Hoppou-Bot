@@ -8,6 +8,9 @@ module.exports = async client => {
     {type: 'PLAYING', msg: 'with some random souls'},
     {type: 'LISTENING', msg: 'to the sounds of poi'}]
 
+    const activity = activityList[Math.floor(Math.random() * activityList.length)]
+    client.user.setActivity(activity.msg, { type: activity.type });
+
     setInterval(() => {
         const activity = activityList[Math.floor(Math.random() * activityList.length)]
         client.user.setActivity(activity.msg, { type: activity.type });

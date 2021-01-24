@@ -34,4 +34,6 @@ module.exports = async (client, member) => {
 
     c.send(me);
     client.emit('guildMemberKick', member);
+
+    await client.GuildUsers.findOneAndDelete({userID: member.user.id, guildID: member.guild.id});
 };
