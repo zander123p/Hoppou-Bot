@@ -4,11 +4,11 @@ module.exports = {
     description: 'List all of my commands or info about a specific command.',
     aliases: ['commands'],
     usage: '[command name]',
-    cooldown: 5,
     async execute(message, args) {
         const { commands } = message.client;
+        let g;
         if (message.guild)
-            await message.guild.ensure();
+            g = await message.guild.ensure();
     
         if (!args.length) {
             let currentCategory = null;
@@ -92,7 +92,7 @@ module.exports = {
         if (message.channel.type === 'dm')
             prefix = process.env.PREFIX;
         else
-            prefix = await message.client.Guilds.findOne({guildID: message.guild.id}).settings.prefix;
+            prefix = g.settings.prefix;
 
         if (command.aliases) embed.addField('Aliases', command.aliases.join(', '));
         if (command.description) embed.addField('Description', command.description);
