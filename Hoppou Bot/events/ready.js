@@ -2,6 +2,8 @@ module.exports = async client => {
     // Calls when the bot logs in
     console.log(`Logged in as ${client.user.tag}!`);
 
+    client.user.setActivity('with the laws of reality', { type: 'PLAYING' });
+
     const usersLogs = await client.MuteLogs.find({});
 
     if (!usersLogs) return;
