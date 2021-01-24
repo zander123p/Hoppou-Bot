@@ -5,7 +5,7 @@ module.exports = {
     guildPermission: 'admin.listpermgroups',
     aliases: ['listpermgroups'],
     async execute(message, args) {
-        const { MessageEmbed } = require("discord.js");
+        const ListedEmbed = require('../../../utils/listedembed');
         const g = await message.guild.ensure();
         const groups = g.permissionGroups;
 
@@ -14,14 +14,15 @@ module.exports = {
             return message.reply('no valid permission groups found.').then(msg => msg.delete({ timeout: 5000 }));
         }
 
-        const embed = new MessageEmbed()
+        const embed = new ListedEmbed()
             .setColor('#faea70')
             .setTitle('Permission Groups');
         
         groups.forEach(group => {
-            embed.addField(group.name, group.permissions.map(perm => perm + '\n'));
+            let name = group.name[0].toUpperCase() + group.name.substring(1);
+            embed.addField(name, group.permissions.map(perm => perm + '\n'));
         });
 
-        message.channel.send(embed);
+        embed.send(message.channel, 10);
     }
 }
