@@ -6,6 +6,7 @@ const user_profileSchema = mongoose.Schema({
     totalActions: Number,
     warnings: [String],
     kicks: [String],
+    bans: [String],
 });
 
 module.exports = mongoose.model('User Profile', user_profileSchema, 'user_profiles');

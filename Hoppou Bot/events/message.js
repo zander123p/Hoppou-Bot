@@ -8,6 +8,10 @@ module.exports = async (client, message) => {
         prefix = process.env.PREFIX;
     }
 
+    const user = await message.guild.members.cache.get(message.author.id).ensure();
+    user.messages = user.messages + 1;
+    await user.save();
+
     if (!message.content.startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
