@@ -1,5 +1,3 @@
-const guild = require("../../../models/guild");
-
 module.exports = {
     name: 'userinfo',
     description: 'Get information on the target user',
@@ -28,7 +26,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle(user.tag)
             .setColor('#9a3deb')
-            .setThumbnail(user.displayAvatarURL());
+            .setThumbnail(user.displayAvatarURL({size: 1024}));
 
         embed.addField(`Account Created`, user.createdAt, true);
         embed.addField(`Joined Server`, gUser.joinedAt, true);
