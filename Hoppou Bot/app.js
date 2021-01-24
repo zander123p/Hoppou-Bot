@@ -104,7 +104,7 @@ Discord.Guild.prototype.ensure = async function() {
             },
         });
     
-        guild.save().catch(err => console.err(err));
+        guild.save().catch(err => console.error(err));
         return guild;
     } else {
         return g;
@@ -124,7 +124,7 @@ Discord.User.prototype.ensure = async function() {
             kicks: [],
         });
 
-        user.save().catch(err => console.err(err));
+        user.save().catch(err => console.error(err));
         return user;
     } else {
         return u;
@@ -140,9 +140,10 @@ Discord.GuildMember.prototype.ensure = async function() {
             guildID: this.guild.id,
             userID: this.id,
             permissionGroups: [],
+            messages: 0,
         });
 
-        user.save().catch(err => console.err(err));
+        user.save().catch(err => console.error(err));
         return user;
     } else {
         return u;
