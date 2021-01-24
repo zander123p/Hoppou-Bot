@@ -6,30 +6,37 @@ module.exports = class ListedEmbed {
         this.fields = [];
         this.fieldCount = 0;
         this.page = 1;
+        return this;
     }
 
     setTitle(title) {
         this.embed.setTitle(title);
+        return this;
     }
 
-    setColour(colour) {
+    setColor(colour) {
         this.embed.setColor(colour);
+        return this;
     }
     
     setAuthor(author, icon = '', url = '') {
         this.embed.setAuthor(author, icon, url);
+        return this;
     }
 
     setDescription(description) {
         this.embed.setDescription(description)
+        return this;
     }
 
     setImage(url) {
         this.embed.setImage(url);
+        return this;
     }
 
     setThumbnail(url) {
         this.embed.setThumbnail(url);
+        return this;
     }
 
     setTimestamp(date = '') {
@@ -37,11 +44,13 @@ module.exports = class ListedEmbed {
             this.embed.setTimestamp();
         else
             this.embed.setTimestamp(date);
+        return this;
     }
 
     addField(title, value, inline = false) {
         this.fields.push({title, value, inline});
         this.fieldCount++;
+        return this;
     }
 
     clearFields() {
@@ -49,7 +58,7 @@ module.exports = class ListedEmbed {
         this.fieldCount = 0;
     }
 
-    sendEmbed(channel, maxSize = 25) {
+    send(channel, maxSize = 25) {
         if (maxSize > 25)
             maxSize = 25;
         if (maxSize < 1)
