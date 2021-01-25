@@ -55,6 +55,11 @@ module.exports = {
         });
         await log.save();
 
+        const profile = await user.ensure();
+
+        profile.mutes++;
+        await profile.save();
+
         setTimeout(async () => {
             const g = await message.guild.ensure();
             const gUser = message.guild.members.cache.get(user.id);
