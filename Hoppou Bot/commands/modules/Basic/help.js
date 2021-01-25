@@ -1,91 +1,55 @@
-const Discord = require('discord.js');
 module.exports = {
     name: 'help',
     description: 'List all of my commands or info about a specific command.',
     aliases: ['commands'],
-    usage: '[command name]',
+    usage: '[command name] | [category name]',
     async execute(message, args) {
+        const ListedEmbed = require('../../../utils/listedembed');
         const { commands } = message.client;
         let g;
         if (message.guild)
             g = await message.guild.ensure();
     
         if (!args.length) {
-            let currentCategory = null;
-            let currentCategoryIndex = 0;
-
-            if (!currentCategory) {
-                currentCategory = commands.categories[currentCategoryIndex];
-            }
-
-            const embed = new Discord.MessageEmbed()
-                .setColor('#158559')
-                .setTitle(`Commands - ${FirstUpperCase(currentCategory)}`);
+            const embed = new ListedEmbed()
+                .setColor('#9a3deb')
+                .setTitle(`Help - Catagories`);
             
-            commands.forEach(cmd => {
-                if (cmd.category !== currentCategory) return;
-                embed.addField(FirstUpperCase(cmd.name), cmd.description, true);
+            message.client.commands.categories.forEach(category => {
+                embed.addField(category, 'Category');
             });
-
-            const filter = (reaction, user) => {
-                return !user.bot;
-            };
             
-            message.channel.send(embed).then(async msg => {
-                msg.react('⬅️').then(() => msg.react('➡️'));
-                let collector = msg.createReactionCollector(filter, { time: 15000 });
-                collector.on('collect', async (reaction, user) => {
-                    if (reaction.emoji.name === '⬅️') {
-                        if (currentCategoryIndex - 1 < 0)
-                            currentCategoryIndex = commands.categories.length-1;
-                        else
-                            currentCategoryIndex--;
-                        await reaction.users.remove(user.id);
-                        collector.resetTimer();
-                    } else if (reaction.emoji.name === '➡️') {
-                        if (currentCategoryIndex + 1 >= commands.categories.length)
-                            currentCategoryIndex = 0;
-                        else
-                            currentCategoryIndex++;
-                        await reaction.users.remove(user.id);
-                        collector.resetTimer();
-                    }
-                    currentCategory = commands.categories[currentCategoryIndex];
-    
-                    embed.setTitle(`Commands - ${FirstUpperCase(currentCategory)}`);
-                    embed.fields = [];
-                    commands.forEach(cmd => {
-                        if (cmd.category !== currentCategory) return;
-                        embed.addField(FirstUpperCase(cmd.name), cmd.description, true);
-                    });
-        
-                    msg.edit(embed);
-                });
-
-                collector.on('end', async () => {
-                    const botReact = msg.reactions.cache.filter(reaction => reaction.users.cache.has(msg.author.id))
-                    for (const reaction of botReact.values()) {
-                        await reaction.users.remove(msg.author.id);
-                    }
-                });
-            })
-            .catch(error => {
-                console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
-                return;
-            });
-
-            return;
+            return embed.send(message.channel, 10);
         }
         const name = args[0].toLowerCase();
+
+        const category = commands.categories.find(c => {
+            if (c.toLowerCase() === name)
+                return c;
+        });
+
+        if (category) {
+            const embed = new ListedEmbed()
+                .setColor('#9a3deb')
+                .setTitle(`Commands - ${FirstUpperCase(category)}`);
+
+            commands.forEach(command => {
+                if (command.category === category) {
+                    embed.addField(FirstUpperCase(command.name), command.description, true);
+                }
+            });
+
+            return embed.send(message.channel, 10);
+        }
+
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
         if (!command) {
             return message.reply('that\'s not a valid command!');
         }
 
-        const embed = new Discord.MessageEmbed()
-        .setColor('#158559')
+        const embed = new ListedEmbed()
+        .setColor('#9a3deb')
         .setTitle(FirstUpperCase(command.name));
 
         let prefix;
@@ -99,7 +63,7 @@ module.exports = {
         if (command.usage) embed.addField('Usage', `${prefix}${command.name} ${command.usage}`);
         if (command.guildPermission) embed.addField('Required Permission', command.guildPermission);
 
-        message.channel.send(embed);
+        embed.send(message.channel);
     },
 };
 
