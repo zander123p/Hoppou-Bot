@@ -3,7 +3,7 @@ module.exports = {
     description: 'Bans a user with a reason',
     guildOnly: true,
     guildPermission: 'mod.ban',
-    args: 1,
+    args: 2,
     usage: '<user> <reason>...',
     aliases: [],
     async execute(message, args) {
