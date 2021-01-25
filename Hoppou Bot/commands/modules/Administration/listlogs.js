@@ -45,9 +45,9 @@ module.exports = {
 
         Array.from(message.client.events.keys()).forEach(k => {
             if (activeLogs.find(x => x.log === message.client.events.get(k))) {
-                embed.addField(message.client.events.get(k)[0].toUpperCase() + message.client.events.get(k).substring(1), 'ACTIVE');
+                embed.addField(k + ': ' + message.client.events.get(k)[0].toUpperCase() + message.client.events.get(k).substring(1), 'ACTIVE');
             } else {
-                embed.addField(message.client.events.get(k)[0].toUpperCase() + message.client.events.get(k).substring(1), 'INACTIVE');
+                embed.addField(k + ': ' + message.client.events.get(k)[0].toUpperCase() + message.client.events.get(k).substring(1), 'INACTIVE');
             }
         });
 
