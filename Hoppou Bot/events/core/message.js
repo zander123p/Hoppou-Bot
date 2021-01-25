@@ -29,7 +29,7 @@ module.exports = async (client, message) => {
 
     //if (message.guild && !message.guild.member(message.author).hasPermission(command.permissions)) return message.reply('you don\'t have the required permissions to run that command!');
     
-    if (message.guild && !await message.guild.member(message.author).hasGuildPermission(command.guildPermission)) return message.reply('you don\'t have the required permissions to run that command!');
+    if (message.guild && !await message.guild.member(message.author).hasGuildPermission(command.guildPermission)) return message.reply('you don\'t have the required permissions to run that command!').then(msg => msg.delete({ timeout: 5000 }));
 
     if (command.args && !args.length || args.length < command.args) {
         let reply = (args.length < command.args && args.length != 0)? `you didn't provide enough arguments!` : `you didn't provide any arguments!`;
@@ -38,13 +38,13 @@ module.exports = async (client, message) => {
             reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
         }
 
-        return message.reply(reply);
+        return message.reply(reply).then(msg => msg.delete({ timeout: 5000 }));
     }
 
     try {
         command.execute(message, args);
     } catch (error) {
         console.error(error);
-        message.reply('there was an error running this command!');
+        message.reply('there was an error running this command!').then(msg => msg.delete({ timeout: 5000 }));
     }
 };
