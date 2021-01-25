@@ -1,4 +1,4 @@
-module.exports = async (client, guild, user) => {
+module.exports = async (client, guild, user, moderator) => {
     const { MessageEmbed } = require("discord.js");
     const g = await guild.ensure();
     const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
@@ -23,10 +23,17 @@ module.exports = async (client, guild, user) => {
 
     const { executor } = channelLog;
 
+    if (executor.id === client.user.id && !moderator) {
+        return;
+    }
+
+    if (!moderator)
+        moderator = executor;
+
     const meU = new MessageEmbed()
         .setColor('#70f567')
         .setTitle('Member Unbanned')
-        .setAuthor(executor.tag, executor.displayAvatarURL())
+        .setAuthor(moderator.tag, moderator.displayAvatarURL())
         .addField('Member', user)
         .setTimestamp();
     
