@@ -196,6 +196,7 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
                 if (group.permissions.includes(permission) || (group.permissions.includes(permission.split('.')[0] + '.*'))) {
                     hasPerms = true;
                 }
+                if (group.blacklist.includes(permission)) hasPerms = false;
             }
         });
 
@@ -213,6 +214,7 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
             if (group.permissions.includes(permission) || (group.permissions.includes(permission.split('.')[0] + '.*'))) {
                 hasPerms = true;
             }
+            if (group.blacklist.includes(permission)) hasPerms = false;
         }
     });
 
