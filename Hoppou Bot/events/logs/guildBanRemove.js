@@ -1,4 +1,4 @@
-module.exports = async (client, guild, user) => {
+module.exports = async (client, guild, user, moderator) => {
     const { MessageEmbed } = require("discord.js");
     const g = await guild.ensure();
     const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
@@ -8,14 +8,14 @@ module.exports = async (client, guild, user) => {
 
     const fetchedLogs = await guild.fetchAuditLogs({
         limit: 1,
-        type: 'MEMBER_BAN_ADD',
+        type: 'MEMBER_BAN_REMOVE',
     });
 
     const channelLog = fetchedLogs.entries.first();
 
     const me = new MessageEmbed()
-        .setColor('#db4444')
-        .setTitle('Member Banned')
+        .setColor('#70f567')
+        .setTitle('Member Unbanned')
         .addField('Member', user.tag)
         .setTimestamp();
 
@@ -23,12 +23,18 @@ module.exports = async (client, guild, user) => {
 
     const { executor } = channelLog;
 
+    if (executor.id === client.user.id && !moderator) {
+        return;
+    }
+
+    if (!moderator)
+        moderator = executor;
+
     const meU = new MessageEmbed()
-        .setColor('#db4444')
-        .setTitle('Member Banned')
-        .setAuthor(executor.tag, executor.displayAvatarURL())
+        .setColor('#70f567')
+        .setTitle('Member Unbanned')
+        .setAuthor(moderator.tag, moderator.displayAvatarURL())
         .addField('Member', user)
-        .addField('Reason', channelLog.reason)
         .setTimestamp();
     
     c.send(meU);

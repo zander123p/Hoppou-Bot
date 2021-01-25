@@ -5,6 +5,7 @@ require('dotenv').config(); // Needed for .env file
 // Basic discord setup
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+client.commands.categories = [];
 
 // Gather all commands from all modules and set the category to the module folder's name
 for (const folder of getDirectories('./commands/modules')) {
@@ -13,6 +14,8 @@ for (const folder of getDirectories('./commands/modules')) {
         const command = require(`./commands/modules/${folder}/${file}`);
         command.category = folder;
         client.commands.set(command.name, command);
+        if (!client.commands.categories.includes(folder))
+            client.commands.categories.push(folder);
     }
 }
 
@@ -21,7 +24,7 @@ client.commands.categories = getDirectories('./commands/modules'); // I don't ne
 client.events = new Discord.Collection();
 
 // Load the events from the events folder
-fs.readdir('./events/', (err, files) => {
+fs.readdir('./events/logs/', (err, files) => {
     if (err) return console.error;
     let index = 0;
     // files.sort((a,b) => {
@@ -29,13 +32,37 @@ fs.readdir('./events/', (err, files) => {
     // });
     files.forEach(file => {
         if (!file.endsWith('.js')) return;
-        const evt = require(`./events/${file}`);
+        const evt = require(`./events/logs/${file}`);
         let evtName = file.split('.')[0];
         console.log(`Loaded Event: '${evtName}'`);
         client.on(evtName, evt.bind(null, client));
         evt.id = evtName;
         client.events.set(index, evtName);
         index++;
+    });
+});
+
+// Load the events from the events folder
+fs.readdir('./events/core/', (err, files) => {
+    if (err) return console.error;
+    files.forEach(file => {
+        if (!file.endsWith('.js')) return;
+        const evt = require(`./events/core/${file}`);
+        let evtName = file.split('.')[0];
+        console.log(`Loaded Event: '${evtName}'`);
+        client.on(evtName, evt.bind(null, client));
+    });
+});
+
+// Load the events from the events folder
+fs.readdir('./events/perms/', (err, files) => {
+    if (err) return console.error;
+    files.forEach(file => {
+        if (!file.endsWith('.js')) return;
+        const evt = require(`./events/perms/${file}`);
+        let evtName = file.split('.')[0];
+        console.log(`Loaded Event: '${evtName}'`);
+        client.on(evtName, evt.bind(null, client));
     });
 });
 
@@ -120,6 +147,7 @@ Discord.User.prototype.ensure = async function() {
             _id: mg.Types.ObjectId(),
             userID: this.id,
             totalActions: 0,
+            mutes: 0,
             warnings: [],
             kicks: [],
         });
