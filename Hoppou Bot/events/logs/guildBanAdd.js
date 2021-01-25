@@ -50,7 +50,7 @@ module.exports = async (client, guild, user, moderator) => {
         userID: user.id,
         guildID: guild.id,
         type: 'ban',
-        moderator: executor.id,
+        moderator: moderator.id,
         reason: channelLog.reason
     });
     await log.save();
