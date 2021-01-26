@@ -16,7 +16,7 @@ module.exports = {
                 .setTitle(`Help - Catagories`);
             
             message.client.commands.categories.forEach(category => {
-                embed.addField(category, 'Category');
+                embed.addField(category, '⠀');
             });
             
             return embed.send(message.channel, 10);
