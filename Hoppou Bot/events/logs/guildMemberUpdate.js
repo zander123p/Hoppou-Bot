@@ -21,8 +21,6 @@ module.exports = async (client, oldMember, newMember) => {
     let oldLog = g.oldLogs.find(c => { if(channelLog2.id === c.id) return c; });
 
     pos = g.oldLogs.findIndex(c => { if(c.log === module.exports.id) return c; });
-    console.log(oldLog);
-    console.log(pos);
     if (pos < 0) {
         g.oldLogs.push({id: channelLog2.id.toString(), log: module.exports.id});
     } else {
