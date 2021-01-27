@@ -1,5 +1,15 @@
+const messageDelete = require("./messageDelete");
+
 module.exports = async (client, oldMessage, newMessage) => {
     const { MessageEmbed } = require("discord.js");
+
+    if (oldMessage.partial) {
+        oldMessage = await oldMessage.fetch();
+    }
+    if (newMessage.partial) {
+        newMessage = await newMessage.fetch();
+    }
+
     if (oldMessage.author.bot || !oldMessage.guild) return;
     const guild = await oldMessage.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });

@@ -1,5 +1,10 @@
 module.exports = async (client, message) => {
     const { MessageEmbed } = require("discord.js");
+
+    if (message.partial) {
+        return;
+    }
+
     if (message.author.bot || !message.guild) return;
     const guild = await message.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });

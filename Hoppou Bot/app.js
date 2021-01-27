@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 require('dotenv').config(); // Needed for .env file
 
 // Basic discord setup
-const client = new Discord.Client();
+const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'] });
 client.commands = new Discord.Collection();
 client.commands.categories = [];
 
@@ -61,8 +61,8 @@ fs.readdir('./events/perms/', (err, files) => {
         if (!file.endsWith('.js')) return;
         const evt = require(`./events/perms/${file}`);
         let evtName = file.split('.')[0];
-        console.log(`Loaded Event: '${evtName}'`);
-        client.on(evtName, evt.bind(null, client));
+        console.log(`Loaded Event: '${evt.name}'`);
+        client.on(evtName, evt.event.bind(null, client));
     });
 });
 
@@ -92,6 +92,7 @@ client.UserProfiles = require('./models/user_profile');
 client.GuildUsers = require('./models/guild_user');
 client.ActionLogs = require('./models/action_log');
 client.MuteLogs = require('./models/mute_log');
+client.GuildNewJoins = require('./models/guild_new_joins');
 
 // Gets all directories in a path
 function getDirectories(path) {
