@@ -13,7 +13,7 @@ module.exports = {
         if (!g.settings.muteRole) {
             message.reply('a mute role needs to be assigned first!').then(msg => msg.delete({ timeout: 5000 }));
             return message.react('❌');
-        }        
+        }
 
         const user = await message.getUserFromID(args[0]);
         if (!user) {
