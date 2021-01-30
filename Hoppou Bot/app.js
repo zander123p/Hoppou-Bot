@@ -132,7 +132,7 @@ Discord.Guild.prototype.ensure = async function() {
             },
         });
     
-        guild.save().catch(err => console.error(err));
+        await guild.save().catch(err => console.error(err));
         return guild;
     } else {
         return g;
@@ -153,7 +153,7 @@ Discord.User.prototype.ensure = async function() {
             kicks: [],
         });
 
-        user.save().catch(err => console.error(err));
+        await user.save().catch(err => console.error(err));
         return user;
     } else {
         return u;
@@ -172,7 +172,7 @@ Discord.GuildMember.prototype.ensure = async function() {
             messages: 0,
         });
 
-        user.save().catch(err => console.error(err));
+        await user.save().catch(err => console.error(err));
         return user;
     } else {
         return u;
@@ -221,6 +221,8 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
 
     return hasPerms;
 }
+
+
 
 client.mongoose.init(); // Init database shit
 client.login(process.env.TOKEN); // Do I even need to?
