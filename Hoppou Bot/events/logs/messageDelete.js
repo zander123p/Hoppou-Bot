@@ -1,16 +1,35 @@
 module.exports = async (client, message) => {
     const { MessageEmbed } = require("discord.js");
 
-    if (message.partial) {
-        return;
-    }
-
-    if (message.author.bot || !message.guild) return;
     const guild = await message.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
     const channelName = chnl.name;
     if (!channelName) return;
     const c = message.guild.channels.cache.get(channelName);
+
+    if (message.partial) {
+        const fetchedLogs = await message.guild.fetchAuditLogs({
+            limit: 1,
+            type: 'MESSAGE_DELETE',
+        });
+    
+        const deletionLog = fetchedLogs.entries.first();
+        const { executor, target } = deletionLog;
+        if (!deletionLog.extra.channel.guild) return;
+
+        const meU = new MessageEmbed()
+            .setColor('#db4444')
+            .setTitle('Unknown Message Deleted')
+            .setAuthor(executor.tag, executor.displayAvatarURL())
+            .addField('Message Author', `Unknown`)
+            .addField('Channel', deletionLog.extra.channel)
+            .setTimestamp();
+        
+        return c.send(meU);
+    }
+
+    if (message.author.bot || !message.guild) return;
+
 
     const fetchedLogs = await message.guild.fetchAuditLogs({
         limit: 1,

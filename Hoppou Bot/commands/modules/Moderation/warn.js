@@ -26,6 +26,9 @@ module.exports = {
         await userProfile.save();
         if (!target.bot)
             target.send(`You have been warned by ${message.author} for ${reason}!`);
-        message.channel.send(`${target} was warned for \'${reason}\'`);
+
+        message.client.emit('guildMemberWarn', guildTarget, message.author, reason);
+
+        message.react('✅');
     },
 };

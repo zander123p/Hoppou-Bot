@@ -67,6 +67,8 @@ module.exports = {
             await message.client.MuteLogs.findOneAndDelete({ userID: gUser.id, guildID: gUser.guild.id});
         }, muteTime);
 
+        message.client.emit('guildMemberMute', gUser, message.author, args[1].toLowerCase());
+
         message.react('✅');
     }
 }
