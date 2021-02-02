@@ -39,7 +39,7 @@ module.exports = {
                 }
             });
 
-            return embed.send(message.channel, 10);
+            return embed.send(message.channel, 9);
         }
 
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
