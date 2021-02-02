@@ -17,6 +17,7 @@ const guildSchema = mongoose.Schema({
     },
     oldLogs: [{id: String, log: String}],
     permissionGroups: [{name: String, permissions: [String], blacklist: [String], role: String}],
+    reactionMessages: [{messageID: String, roles: [{roleID: String, emojiID: String}]}],
 }, {
     typeKey: '$type'
 });
