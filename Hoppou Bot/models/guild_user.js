@@ -6,6 +6,7 @@ const user_profileSchema = mongoose.Schema({
     userID: String,
     permissionGroups: [String],
     messages: Number,
+    exp: Number,
 });
 
 module.exports = mongoose.model('Guild User', user_profileSchema, 'guild_users');
