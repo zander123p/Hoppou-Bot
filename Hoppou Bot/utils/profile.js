@@ -158,11 +158,11 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke, clip) {
 const SimplexNoise = require('simplex-noise');
 
 backgrounds = [
-    { id: 0, path: __dirname + '\\img\\bg1.jpg', offset: { x: 50, y: 120 } },
-    { id: 1, path: __dirname + '\\img\\bg2.jpg', offset: { x: 0, y: 0 } },
-    { id: 2, path: __dirname + '\\img\\bg3.jpg', offset: { x: 0, y: 0 } },
-    { id: 3, path: __dirname + '\\img\\bg4.jpg', offset: { x: 0, y: 50 } },
-    { id: 4, path: __dirname + '\\img\\bg5.jpg', offset: { x: 0, y: 115 } },
+    { id: 0, path: './utils/img/bg1.jpg', offset: { x: 50, y: 120 } },
+    { id: 1, path: './utils/img/bg2.jpg', offset: { x: 0, y: 0 } },
+    { id: 2, path: './utils/img/bg3.jpg', offset: { x: 0, y: 0 } },
+    { id: 3, path: './utils/img/bg4.jpg', offset: { x: 0, y: 50 } },
+    { id: 4, path: './utils/img/bg5.jpg', offset: { x: 0, y: 115 } },
 ];
 
 flares = [
