@@ -89,6 +89,7 @@ fs.readdir('./events/perms/', (err, files) => {
 client.mongoose = require('./utils/mongoose');
 client.Guilds = require('./models/guild');
 client.UserProfiles = require('./models/user_profile');
+client.UserActionProfiles = require('./models/user_action_profile');
 client.GuildUsers = require('./models/guild_user');
 client.ActionLogs = require('./models/action_log');
 client.MuteLogs = require('./models/mute_log');
@@ -142,9 +143,9 @@ Discord.Guild.prototype.ensure = async function() {
 // Helper function to ensure a user is in the user profile; if a user doesn't exist, add them
 Discord.User.prototype.ensure = async function() {
     const mg = require('mongoose');
-    const u = await this.client.UserProfiles.findOne({userID: this.id});
+    const u = await this.client.UserActionProfiles.findOne({userID: this.id});
     if (!u) {
-        const user = new this.client.UserProfiles({
+        const user = new this.client.UserActionProfiles({
             _id: mg.Types.ObjectId(),
             userID: this.id,
             totalActions: 0,
@@ -160,6 +161,26 @@ Discord.User.prototype.ensure = async function() {
     }
 };
 
+Discord.User.prototype.profile = async function () {
+    const mg = require('mongoose');
+    const u = await this.client.UserProfiles.findOne({userID: this.id});
+    if (!u) {
+        const user = new this.client.UserProfiles({
+            _id: mg.Types.ObjectId(),
+            userID: this.id,
+            title: '',
+            currentBg: 0,
+            currentFlare: 0,
+            animated: false,
+        });
+
+        await user.save().catch(err => console.error(err));
+        return user;
+    } else {
+        return u;
+    }
+}
+
 Discord.GuildMember.prototype.ensure = async function() {
     const mg = require('mongoose');
     const u = await this.client.GuildUsers.findOne({userID: this.id, guildID: this.guild.id});
@@ -170,6 +191,7 @@ Discord.GuildMember.prototype.ensure = async function() {
             userID: this.id,
             permissionGroups: [],
             messages: 0,
+            exp: 0,
         });
 
         await user.save().catch(err => console.error(err));
@@ -222,6 +244,11 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
     return hasPerms;
 }
 
+Discord.GuildMember.prototype.getLevel = async function() {
+    const gUser = await this.ensure();
+    const level = Math.floor(0.435 * Math.sqrt((gUser.exp)? gUser.exp : 0));
+    return level;
+}
 
 
 client.mongoose.init(); // Init database shit

@@ -1,15 +1,41 @@
 module.exports = async (client, message) => {
     if (message.author.bot) return; // Check not self or bot
     const user = await message.guild.members.cache.get(message.author.id).ensure();
+    const gUser = await message.guild.members.cache.get(message.author.id);
     let prefix;
+    let g;
     if (message.guild) {
-        const g = await message.guild.ensure();
+        g = await message.guild.ensure();
         prefix = g.settings.prefix;
     } else {
         prefix = process.env.PREFIX;
     }
 
     user.messages = user.messages + 1;
+
+    if (message.guild) {
+        if (g.settings.rankupChannel) {
+            let oldLevel = await gUser.getLevel();
+            user.exp += 1;
+            await user.save();
+            let newLevel = await gUser.getLevel();
+            if (newLevel > oldLevel) {
+                const channel = message.guild.channels.cache.get(g.settings.rankupChannel);
+                const { MessageEmbed } = require("discord.js");
+                const embed = new MessageEmbed()
+                    .setColor('#9a3deb')
+                    .setTitle(`Level up`)
+                    .setTimestamp()
+                    .setThumbnail(gUser.user.displayAvatarURL({ size: 1024 }));
+        
+                embed.addField(`Level`, newLevel);
+        
+                channel.send(`${gUser.user}, you leveled up!`);
+                channel.send(embed);
+            }
+        }
+    }
+    
     try {
         await user.save();
     } catch {
