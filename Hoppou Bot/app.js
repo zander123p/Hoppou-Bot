@@ -7,6 +7,9 @@ const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION
 client.commands = new Discord.Collection();
 client.commands.categories = [];
 
+client.VCTracker = new Discord.Collection();
+
+
 // Gather all commands from all modules and set the category to the module folder's name
 for (const folder of getDirectories('./commands/modules')) {
     let files = fs.readdirSync(`./commands/modules/${folder}`).filter(file => file.endsWith('.js'));
@@ -130,6 +133,7 @@ Discord.Guild.prototype.ensure = async function() {
             settings: {
                 prefix: process.env.prefix,
                 channels: [],
+                VCTracker: [],
             },
         });
     
