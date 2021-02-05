@@ -2,11 +2,15 @@ module.exports = async client => {
     // Calls when the bot logs in
     console.log(`Logged in as ${client.user.tag}!`);
 
+
+    // Set Activity
     const activityList = 
-    [{type: 'PLAYING', msg: 'with the laws of reality'},
-    {type: 'WATCHING', msg: 'the souls eagerly'},
-    {type: 'PLAYING', msg: 'with some random souls'},
-    {type: 'LISTENING', msg: 'to the sounds of poi'}]
+    [
+        {type: 'PLAYING', msg: 'with the laws of reality'},
+        {type: 'WATCHING', msg: 'souls eagerly'},
+        {type: 'PLAYING', msg: 'with random souls'},
+        {type: 'LISTENING', msg: 'to the sounds of poi'},
+    ]
 
     const activity = activityList[Math.floor(Math.random() * activityList.length)]
     client.user.setActivity(activity.msg, { type: activity.type });
@@ -16,6 +20,8 @@ module.exports = async client => {
         client.user.setActivity(activity.msg, { type: activity.type });
     }, 1000 * 60 * Math.floor(Math.random() * 61) + 15)
 
+
+    // Mute log update
     const usersLogs = await client.MuteLogs.find({});
 
     if (!usersLogs) return;
@@ -30,4 +36,50 @@ module.exports = async client => {
             await client.MuteLogs.findOneAndDelete({ userID: gUser.id, guildID: gUser.guild.id});
         }, log.muteTime - Date.now().valueOf());
     });
+    
+    
+    //Month check
+    if (isLastDay(new Date())) {
+        client.guilds.cache.forEach(async guild => {
+            const members = await client.GuildUsers.find({guildID: guild.id});
+            members.forEach(async member => {
+                if (member.VCTracker) {
+                    member.VCTracker = undefined;
+                    await member.save();    
+                }
+            });
+        });
+    }
+
+    //Check users in VCs
+    client.guilds.cache.forEach(async guild => {
+        guild.members.cache.forEach(async member => {
+            const g = await guild.ensure();
+            const vState = member.voice;
+            if (!vState.channel) return;
+            const c = g.settings.VCTrackerChannels[g.settings.VCTrackerChannels.indexOf(vState.channel.id)];
+        
+            if (!c) return;
+            if (member.user.bot) return;
+        
+            let tracker = setInterval(async () => {
+                const user = await member.ensure();
+                let t = user.VCTracker.find(tracker => tracker.id === vState.channel.id);
+                if (t) {
+                    user.VCTracker[user.VCTracker.indexOf(t)].mins = user.VCTracker[user.VCTracker.indexOf(t)].mins + 1;
+                    await user.save();
+                } else {
+                    user.VCTracker = [{id: vState.channel.id, mins: 1}];
+                    await user.save();
+                }
+            }, 60000);
+            client.VCTracker.set(member.id, tracker);
+        });
+    });
 };
+
+
+// https://stackoverflow.com/questions/6355063/how-to-validate-date-if-is-the-last-day-of-the-month-with-javascript
+function isLastDay(dt) {
+    return new Date(dt.getTime() + 86400000).getDate() === 1;
+}
