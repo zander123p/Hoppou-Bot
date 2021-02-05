@@ -7,6 +7,7 @@ const guildSchema = mongoose.Schema({
     settings: {
         prefix: String,
         channels: [{ name: String, logs: [String]}],
+        VCTrackerChannels: [String],
         muteRole: String,
         welcomeChannel: String,
         welcomeMessage: String,

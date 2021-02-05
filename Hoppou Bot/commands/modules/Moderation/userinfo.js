@@ -4,7 +4,7 @@ module.exports = {
     guildOnly: true,
     guildPermission: 'mod.userinfo',
     args: 1,
-    usage: '<user> [warnings] | [kicks] | [bans]',
+    usage: '<user> [warnings] | [kicks] | [bans] | [VC]',
     aliases: ['ui'],
     async execute(message, args) {
         const ListedEmbed = require('../../../utils/listedembed');
@@ -24,7 +24,7 @@ module.exports = {
         const u = await gUser.ensure();
 
         if (args.length > 1) {
-            const profile = await message.client.UserProfiles.findOne({userID: user.id});
+            const profile = await message.client.UserActionProfiles.findOne({userID: user.id});
 
             const moment = require('moment');
 
@@ -37,7 +37,7 @@ module.exports = {
                 const embed = new ListedEmbed()
                     .setTitle(`Warnings for ${user.tag}`)
                     .setColor('#9a3deb')
-                    .setThumbnail(user.displayAvatarURL({size: 1024}));
+                    .setThumbnail(user.displayAvatarURL({format: 'jpg', size: 1024}));
 
                 let wait = 0;
                 
@@ -56,7 +56,6 @@ module.exports = {
                     }
                 });
             } else if (args[1].toLowerCase().includes('kick')) {
-                console.log(profile.kicks.length);
                 if (profile.kicks.length === 0) {
                     message.reply('no valid kicks found for this user.').then(msg => msg.delete({ timeout: 5000 }));
                     return message.react('❌');
@@ -110,6 +109,23 @@ module.exports = {
                         embed.send(message.channel, 3);
                     }
                 });
+            } else if (args[1].toLowerCase().includes('vc')) {
+                if (!u.VCTracker || u.VCTracker.length === 0) {
+                    message.reply('no VCs found tracked on this user.').then(msg => msg.delete({ timeout: 5000 }));
+                    return message.react('❌');
+                }
+
+                const embed = new ListedEmbed()
+                    .setTitle(`VCs tracked on ${user.tag}`)
+                    .setColor('#9a3deb')
+                    .setThumbnail(user.displayAvatarURL({size: 1024}));
+
+                u.VCTracker.forEach(VC => {
+                    const chanl = message.guild.channels.cache.get(VC.id);
+                    embed.addField(`${chanl.name}`, `${VC.mins}m`);
+                });
+
+                embed.send(message.channel, 3);
             }
             return;
         }
@@ -124,7 +140,7 @@ module.exports = {
         if (u.permissionGroups.length > 0)
             embed.addField(`Permission Groups`, u.permissionGroups.map(group => group + '\n'), true);
         embed.addField(`Total Messages Sent`, u.messages, true);
-        const profile = await message.client.UserProfiles.findOne({userID: user.id});
+        const profile = await message.client.UserActionProfiles.findOne({userID: user.id});
         if (profile) {
             embed.addField(`Mutes`, profile.mutes, true);
             embed.addField(`Warnings`, profile.warnings.length, true);
