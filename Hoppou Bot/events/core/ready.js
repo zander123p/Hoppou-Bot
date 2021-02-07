@@ -53,27 +53,33 @@ module.exports = async client => {
 
     //Check users in VCs
     client.guilds.cache.forEach(async guild => {
-        guild.members.cache.forEach(async member => {
-            const g = await guild.ensure();
-            const vState = member.voice;
-            if (!vState.channel) return;
-            const c = g.settings.VCTrackerChannels[g.settings.VCTrackerChannels.indexOf(vState.channel.id)];
-        
-            if (!c) return;
-            if (member.user.bot) return;
-        
-            let tracker = setInterval(async () => {
-                const user = await member.ensure();
-                let t = user.VCTracker.find(tracker => tracker.id === vState.channel.id);
-                if (t) {
-                    user.VCTracker[user.VCTracker.indexOf(t)].mins = user.VCTracker[user.VCTracker.indexOf(t)].mins + 1;
-                    await user.save();
-                } else {
-                    user.VCTracker = [{id: vState.channel.id, mins: 1}];
-                    await user.save();
-                }
-            }, 60000);
-            client.VCTracker.set(member.id, tracker);
+        const g = await guild.ensure();
+        g.settings.VCTrackerChannels.forEach(async c => {
+            const vc = guild.channels.cache.get(c);
+
+            vc.members.forEach(async member => {
+                const vState = member.voice;
+                if (!vState.channel) return;
+                        
+                if (member.user.bot) return;
+                
+                if (client.VCTracker.get(member.id)) {
+                    clearInterval(client.VCTracker.get(member.id));
+                    client.VCTracker.delete(member.id);
+                }        
+                let tracker = setInterval(async () => {
+                    const user = await member.ensure();
+                    let t = user.VCTracker.find(tracker => tracker.id === vState.channel.id);
+                    if (t) {
+                        user.VCTracker[user.VCTracker.indexOf(t)].mins = user.VCTracker[user.VCTracker.indexOf(t)].mins + 1;
+                        await user.save();
+                    } else {
+                        user.VCTracker.push({id: vState.channel.id, mins: 1});
+                        await user.save();
+                    }
+                }, 60000);
+                client.VCTracker.set(member.id, tracker);
+            });
         });
     });
 };
