@@ -53,6 +53,22 @@ module.exports = async function drawProfile(userProfile) {
     ctx.textAlign = 'center';
     ctx.fillText(`${userProfile.name}`, (1024/2)/2, 55 + ((userProfile.title)? 0 : 15));
     ctx.fillText(`Guild Level: ${userProfile.level}`, (1024/2)*1.5, 55+15);
+
+    ctx.shadowColor = 'black';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetY = 8;
+    ctx.lineWidth = 8;
+    ctx.font = '72px serif';
+    ctx.textAlign = 'start';
+    ctx.strokeText(`Guild Rank: #${userProfile.rank}`, (1024/2)/2, 512-24);
+    ctx.fillText(`Guild Rank: #${userProfile.rank}`, (1024/2)/2, 512-24);
+    ctx.font = '55px serif';
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowColor = 'none';
+    ctx.shadowBlur = 0;
+
     ctx.font = '22px serif';
     if (userProfile.title)
       ctx.fillText(`<${userProfile.title}>`, (1024/2)/2, 60+25);
