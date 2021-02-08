@@ -4,6 +4,7 @@ module.exports = {
     name: 'profile',
     description: 'Displays your profile.',
     guildOnly: true,
+    aliases: ['rank', 'pfp', 'level'],
     async execute(message, args) {
         const user = message.author;
         const member = message.guild.members.cache.get(user.id);
@@ -11,11 +12,15 @@ module.exports = {
 
         const level = await member.getLevel();
 
+        const sortUsers = await message.client.GuildUsers.find({guildID: message.guild.id}).sort({messages: -1});
+        const userRank = sortUsers.findIndex(gUser => gUser.userID === user.id) + 1;
+
         const userProfile = {
             name: user.username,
             userID: user.id,
             title: profile.title,
             level: level.toString(),
+            rank: userRank,
             bg: profile.currentBg,
             flare: profile.currentFlare,
             animated: profile.animated,
