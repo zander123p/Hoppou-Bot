@@ -16,9 +16,9 @@ module.exports = {
                 .setTitle(`Help - Catagories`);
             
             message.client.commands.categories.forEach(category => {
-                embed.addField(category, '⠀');
+                embed.addField(category, `${g.settings.prefix}help ${category}`);
             });
-            
+
             return embed.send(message.channel, 10);
         }
         const name = args[0].toLowerCase();
