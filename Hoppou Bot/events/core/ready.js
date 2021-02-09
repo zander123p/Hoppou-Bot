@@ -9,7 +9,7 @@ module.exports = async client => {
         {type: 'PLAYING', msg: 'with the laws of reality'},
         {type: 'WATCHING', msg: 'souls eagerly'},
         {type: 'PLAYING', msg: 'with random souls'},
-        {type: 'LISTENING', msg: 'to the sounds of poi'},
+        {type: 'LISTENING', msg: 'the sounds of poi'},
     ]
 
     const activity = activityList[Math.floor(Math.random() * activityList.length)]
