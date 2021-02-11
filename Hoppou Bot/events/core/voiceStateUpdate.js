@@ -1,6 +1,6 @@
 module.exports = async (client, oldState, newState) => {
     const g = await newState.guild.ensure();
-    const c = g.settings.VCTrackerChannels[g.settings.VCTrackerChannels.indexOf((oldState.channel)? oldState.channel.id : newState.channel.id)];
+    const c = g.settings.VCTrackerChannels.find(c => c.id === ((oldState.channel)? oldState.channel.id : newState.channel.id));
 
     if (!c) return;
     if (oldState.member.user.bot || newState.member.user.bot) return;
@@ -11,6 +11,8 @@ module.exports = async (client, oldState, newState) => {
             client.VCTracker.delete(newState.member.id);
         }
         let tracker = setInterval(async () => {
+            if (newState.channel.members.size < c.threshold) return;
+
             const user = await newState.member.ensure();
             let t = user.VCTracker.find(tracker => tracker.id === newState.channel.id);
             if (t) {
@@ -29,6 +31,8 @@ module.exports = async (client, oldState, newState) => {
         clearInterval(client.VCTracker.get(newState.member.id));
         client.VCTracker.delete(newState.member.id);
         let tracker = setInterval(async () => {
+            if (newState.channel.members.size < c.threshold) return;
+
             const user = await newState.member.ensure();
             let t = user.VCTracker.find(tracker => tracker.id === newState.channel.id);
             if (t) {

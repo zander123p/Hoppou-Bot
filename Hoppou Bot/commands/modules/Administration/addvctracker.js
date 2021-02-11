@@ -4,7 +4,7 @@ module.exports = {
     guildOnly: true,
     guildPermission: 'admin.addvctracker',
     args: 1,
-    usage: '<channel>',
+    usage: '<channel> [threshold]',
     async execute(message, args) {
         const c = args[0]; // Match for #channel-name
         const channel = message.guild.channels.cache.get(c);
@@ -15,7 +15,7 @@ module.exports = {
         }
 
         if (channel.type !== 'voice') {
-            message.reply('please input a voice channel').then(msg => msg.delete({ timeout: 5000 }));
+            message.reply('please use a voice channel').then(msg => msg.delete({ timeout: 5000 }));
             return message.react('❌');
         }
 
@@ -23,12 +23,16 @@ module.exports = {
         if (!g.settings.VCTrackerChannels)
             g.settings.VCTrackerChannels = [];
 
-        if (g.settings.VCTrackerChannels.includes(channel.id)) {
+        if (g.settings.VCTrackerChannels.find(vc => vc.id === channel.id)) {
             message.reply('this channel is already being tracked').then(msg => msg.delete({ timeout: 5000 }));
             return message.react('❌');
         }
 
-        g.settings.VCTrackerChannels.push(channel.id);
+        const threshold = parseInt(args[1]);
+        if (!threshold)
+            threshold = 1;
+
+        g.settings.VCTrackerChannels.push({id: channel.id, threshold});
 
         await g.save();
 

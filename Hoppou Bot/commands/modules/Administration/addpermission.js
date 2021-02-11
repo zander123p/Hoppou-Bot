@@ -1,12 +1,11 @@
 module.exports = {
-    name: 'addpermissions',
+    name: 'addpermission',
     description: 'Adds permission(s) to a group',
     guildOnly: true,
-    permissions: ['ADMINISTRATION'],
-    guildPermission: 'admin.addperms',
-    aliases: ['addperms'],
+    guildPermission: 'admin.addperm',
+    aliases: ['addperm'],
     args: 2,
-    usage: '<name> <permissions>',
+    usage: '<name> <permission(s)>',
     async execute(message, args) {
         const name = args[0]; // Name
         const perms = args.slice(1); // Permissions

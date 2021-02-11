@@ -23,12 +23,14 @@ module.exports = {
         if (!g.settings.VCTrackerChannels)
             g.settings.VCTrackerChannels = [];
 
-        if (!g.settings.VCTrackerChannels.includes(channel.id)) {
+        const vc = g.settings.VCTrackerChannels.find(vc => vc.id === channel.id);
+
+        if (!vc) {
             message.reply('this channel is not being tracked').then(msg => msg.delete({ timeout: 5000 }));
             return message.react('❌');
         }
 
-        g.settings.VCTrackerChannels.splice(g.settings.VCTrackerChannels.indexOf(channel.id), 1);
+        g.settings.VCTrackerChannels.splice(g.settings.VCTrackerChannels.indexOf(vc), 1);
 
         await g.save();
 

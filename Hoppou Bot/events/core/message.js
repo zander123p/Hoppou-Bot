@@ -15,6 +15,8 @@ module.exports = async (client, message) => {
 
     if (message.guild) {
         if (g.settings.rankupChannel) {
+            if (!user.exp) user.exp = 0;
+
             let oldLevel = await gUser.getLevel();
             user.exp += 1;
             await user.save();
@@ -42,7 +44,7 @@ module.exports = async (client, message) => {
         
     }
 
-    if (!message.content.startsWith(prefix)) return;
+    if (!message.content.toLowerCase().startsWith(prefix)) return;
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
