@@ -2,7 +2,7 @@ module.exports = {
     name: 'minesweeper',
     description: 'Play a game of minesweeper.\nMax size of 9.\nDifficulties: easy, medium and hard.',
     guildOnly: true,
-    usage: '[size]',
+    usage: '[size] [difficulty]',
     aliases: ['ms'],
     async execute(message, args) {
         let size = Math.abs(parseInt(args[0]));
