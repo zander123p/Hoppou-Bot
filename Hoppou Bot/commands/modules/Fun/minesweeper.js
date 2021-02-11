@@ -14,8 +14,9 @@ module.exports = {
             size = 4;
 
         let difficulty = 1;
+
         
-        if (!parseInt(args[0]) || args[1]) {
+        if ((args[0] && !parseInt(args[0])) || args[1]) {
             const diffA = args[0].toLowerCase();
             const diffB = args[0].toLowerCase();
 
