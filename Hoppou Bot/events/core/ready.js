@@ -55,7 +55,7 @@ module.exports = async client => {
     client.guilds.cache.forEach(async guild => {
         const g = await guild.ensure();
         g.settings.VCTrackerChannels.forEach(async c => {
-            const vc = guild.channels.cache.get(c);
+            const vc = guild.channels.cache.get(c.id);
 
             vc.members.forEach(async member => {
                 const vState = member.voice;
@@ -68,6 +68,8 @@ module.exports = async client => {
                     client.VCTracker.delete(member.id);
                 }        
                 let tracker = setInterval(async () => {
+                    if (vc.members.size < c.threshold) return;
+
                     const user = await member.ensure();
                     let t = user.VCTracker.find(tracker => tracker.id === vState.channel.id);
                     if (t) {
