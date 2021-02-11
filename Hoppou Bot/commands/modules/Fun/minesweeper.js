@@ -1,6 +1,6 @@
 module.exports = {
     name: 'minesweeper',
-    description: 'Play a game of minesweeper.\nMax size of 8.',
+    description: 'Play a game of minesweeper.\nMax size of 9.\nDifficulties: easy, medium and hard.',
     guildOnly: true,
     usage: '[size]',
     aliases: ['ms'],
