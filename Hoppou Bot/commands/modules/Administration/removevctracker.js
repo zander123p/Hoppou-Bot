@@ -4,7 +4,7 @@ module.exports = {
     guildOnly: true,
     guildPermission: 'admin.removevctracker',
     args: 1,
-    usage: '<channel>',
+    usage: '<channel id>',
     async execute(message, args) {
         const c = args[0]; // Match for #channel-name
         const channel = message.guild.channels.cache.get(c);

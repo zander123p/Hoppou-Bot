@@ -15,12 +15,15 @@ module.exports = async (client, oldRole, newRole) => {
 
     const me = new MessageEmbed()
         .setColor('#faea70')
-        .setTitle('Guild Updated')
+        .setTitle('Role Updated')
         .setTimestamp();
 
     if (!channelLog) return c.send(me);
 
     const { executor, changes } = channelLog;
+
+    if (oldRole.rawPosition != newRole.rawPosition) return;
+
     changes.forEach(change => {
         if(change.key === 'name') {
             let meU = new MessageEmbed()
