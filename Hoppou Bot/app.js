@@ -131,7 +131,7 @@ Discord.Guild.prototype.ensure = async function() {
             guildID: this.id,
             guildName: this.name,
             settings: {
-                prefix: process.env.prefix,
+                prefix: process.env.PREFIX,
                 channels: [],
                 VCTracker: [],
             },
