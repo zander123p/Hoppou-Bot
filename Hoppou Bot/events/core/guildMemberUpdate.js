@@ -21,7 +21,8 @@ module.exports = async (client, oldMember, newMember) => {
             let msg = g.settings.welcomeMessage;
             msg = msg.replace('<@user>', oldMember);
             msg = msg.replace('<@server>', oldMember.guild);
-            msg = msg.replace('<@count>', `${oldMember.guild.memberCount.toString()}${([4,5,6,7,8,9,0].includes(oldMember.guild.memberCount % 10))? 'th' : (([1].includes(oldMember.guild.memberCount % 10))? 'st' : (([2].includes(oldMember.guild.memberCount % 10))? 'nd' : 'rd'))}`);
+            const memberCount = oldMember.guild.roles.cache.get(g.settings.newcommerRole).members.size;
+            msg = msg.replace('<@count>', `${memberCount}${([4,5,6,7,8,9,0].includes(memberCount % 10))? 'th' : (([1].includes(memberCount % 10))? 'st' : (([2].includes(memberCount % 10))? 'nd' : 'rd'))}`);
         
             channel.send(msg);
         }
