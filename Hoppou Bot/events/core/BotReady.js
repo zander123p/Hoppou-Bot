@@ -36,25 +36,56 @@ module.exports = {
             });
         }, 1000 * 60 * Math.floor(Math.random() * 61) + 15)
 
+        // Newcommer system update
+        const newUsers = await client.GuildNewJoins.find({});
+
+        if (newUsers) {
+            newUsers.forEach(async usp => {
+                const userID = usp.userID;
+                const guildID = usp.guildID;
+                const messageID = usp.messageID;
+
+                const guild = client.guilds.cache.get(guildID);
+                if (!guild) return;
+                const user = guild.members.cache.get(userID);
+                const g = await guild.ensure();
+                const channel = guild.channels.cache.get(g.settings.newcommerChannel);
+                try {
+                    const message = await channel.messages.fetch(messageID);
+                    if (!user) {
+                        message.delete();
+                        await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
+                    }
+    
+                    if (user.roles.cache.has(guild.roles.cache.get(g.settings.newcommerRole))) {
+                        message.delete();
+                        await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
+                    }
+                } catch {
+                    console.log(`Invalid message in database\nMessageID: ${messageID}\nUserID: ${userID}\nGuildID: ${guildID}`);
+                }
+            });
+        }
 
         // Mute log update
         const usersLogs = await client.MuteLogs.find({});
 
-        if (!usersLogs) return;
+        if (usersLogs) {
+            usersLogs.forEach(log => {
+                setTimeout(async () => {
+                    const guild = client.guilds.cache.get(log.guildID);
+    
+                    const g = await guild.ensure();
+                    const gUser = guild.members.cache.get(log.userID);
+                    gUser.roles.remove(guild.roles.cache.get(g.settings.muteRole));
+                    await client.MuteLogs.findOneAndDelete({
+                        userID: gUser.id,
+                        guildID: gUser.guild.id
+                    });
+                }, log.muteTime - Date.now().valueOf());
+            });
+        }
 
-        usersLogs.forEach(log => {
-            setTimeout(async () => {
-                const guild = client.guilds.cache.get(log.guildID);
-
-                const g = await guild.ensure();
-                const gUser = guild.members.cache.get(log.userID);
-                gUser.roles.remove(guild.roles.cache.get(g.settings.muteRole));
-                await client.MuteLogs.findOneAndDelete({
-                    userID: gUser.id,
-                    guildID: gUser.guild.id
-                });
-            }, log.muteTime - Date.now().valueOf());
-        });
 
 
         //Month check
