@@ -53,7 +53,7 @@ fs.readdir('./events/core/', (err, files) => {
         const evt = require(`./events/core/${file}`);
         let evtName = file.split('.')[0];
         console.log(`Loaded Event: '${evtName}'`);
-        client.on(evtName, evt.event.bind(null, client));
+        client.on(evt.eventType, evt.event.bind(null, client));
     });
 });
 
