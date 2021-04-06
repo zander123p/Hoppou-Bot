@@ -1,5 +1,5 @@
 module.exports = {
-    eventType: 'guildMemberUpdate.js',
+    eventType: 'guildMemberUpdate',
     async event(client, oldMember, newMember) {
         const g = await oldMember.guild.ensure();
         const chanl = g.settings.welcomeChannel;
