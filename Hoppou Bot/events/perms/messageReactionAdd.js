@@ -1,5 +1,3 @@
-const messageDelete = require("../logs/messageDelete");
-
 module.exports = {
     name: 'New Commer Let-In',
     permission: 'mod.letin',
