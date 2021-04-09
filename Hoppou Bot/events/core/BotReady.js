@@ -50,8 +50,10 @@ module.exports = {
                 const user = guild.members.cache.get(userID);
                 const g = await guild.ensure();
                 const channel = guild.channels.cache.get(g.settings.newcommerChannel);
+                console.log(channel);
                 try {
                     const message = await channel.messages.fetch(messageID);
+                    console.log(message);
                     if (!user) {
                         message.delete();
                         await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
