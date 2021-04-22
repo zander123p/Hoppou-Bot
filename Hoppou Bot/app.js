@@ -205,6 +205,20 @@ Discord.GuildMember.prototype.ensure = async function() {
     }
 }
 
+Discord.GuildMember.prototype.getGuildPermissionGroups = async function() {
+    let groups = [];
+    const guild = await this.guild.ensure();
+
+    const roles = this.roles.cache;
+    roles.forEach(r => {
+        groups.push(guild.permissionGroups.filter(g => {
+            if (g.role === r.id) return g;
+        })[0]);
+    });
+    groups = groups.filter(element => element !== undefined);
+    return groups;
+}
+
 Discord.GuildMember.prototype.hasGuildPermission = async function(permission, role = true) {
     if (!permission || this.guild.owner === this)
         return true;
