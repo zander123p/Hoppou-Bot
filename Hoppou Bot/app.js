@@ -7,6 +7,8 @@ const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION
 client.commands = new Discord.Collection();
 client.commands.categories = [];
 
+client.cooldowns = new Discord.Collection();
+
 client.VCTracker = new Discord.Collection();
 
 
