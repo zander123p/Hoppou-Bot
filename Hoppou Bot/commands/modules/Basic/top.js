@@ -24,6 +24,7 @@ module.exports = {
 
             for (let i = 0; i < displayCount; i++) {
                 const member = message.guild.members.cache.get(sortUsers[i].userID);
+                if (!member) continue;
                 embed.addField(`${member.user.tag}`, `Rank: #${i+1}\nMessages: ${sortUsers[i].messages}`);
             }
 
