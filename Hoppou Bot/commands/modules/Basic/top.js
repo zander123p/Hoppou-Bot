@@ -2,7 +2,7 @@ module.exports = {
     name: 'top',
     description: 'Get the top 10 of a category.',
     guildOnly: true,
-    usage: '[messages | vc]',
+    usage: '[messages | vc] [all]',
     aliases: ['leaderboard'],
     async execute(message, args) {
         const ListedEmbed = require('../../../utils/listedembed');
@@ -13,14 +13,14 @@ module.exports = {
             return message.react('❌');
         }
 
-        if (args.length === 0 || args[0].toLowerCase() === 'messages') {
+        if (args.length === 0 || args[0].toLowerCase() === 'all' || args[0].toLowerCase() === 'messages') {
             const sortUsers = await message.client.GuildUsers.find({guildID: message.guild.id}).sort({messages: -1});
 
             const embed = new ListedEmbed()
                 .setColor('#9a3deb')
                 .setTitle('Top Message Senders');
 
-            let displayCount = (sortUsers.length < 10)? sortUsers.length : 10;
+            let displayCount = (sortUsers.length < 3 || ((args[1])? args[1].toLowerCase() : '') === 'all' || ((args[0])? args[0].toLowerCase() : '') === 'all')? sortUsers.length : 3;
 
             for (let i = 0; i < displayCount; i++) {
                 const member = message.guild.members.cache.get(sortUsers[i].userID);
