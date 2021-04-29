@@ -20,7 +20,7 @@ module.exports = {
                 .setColor('#9a3deb')
                 .setTitle('Top Message Senders');
 
-            let displayCount = (sortUsers.length < 3 || ((args[1])? args[1].toLowerCase() : '') === 'all' || ((args[0])? args[0].toLowerCase() : '') === 'all')? sortUsers.length : 3;
+            let displayCount = (sortUsers.length < 10 || ((args[1])? args[1].toLowerCase() : '') === 'all' || ((args[0])? args[0].toLowerCase() : '') === 'all')? sortUsers.length : 10;
 
             for (let i = 0; i < displayCount; i++) {
                 const member = message.guild.members.cache.get(sortUsers[i].userID);
