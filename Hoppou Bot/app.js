@@ -236,10 +236,9 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
             const group = guild.permissionGroups.find(g => g.role === r.id)
             if(group) {
                 if (group.permissions.includes('*')) hasPerms = true;
-                if (group.permissions.includes(permission) || (group.permissions.includes(permission.split('.')[0] + '.*'))) {
-                    hasPerms = true;
-                }
-                if (group.blacklist.includes(permission)) hasPerms = false;
+                if (group.blacklist.includes(permission)) return;
+                if (group.permissions.includes(permission.split('.')[0] + '.*')) hasPerms = true;
+                if (group.permissions.includes(permission)) hasPerms = true;
             }
         });
 
