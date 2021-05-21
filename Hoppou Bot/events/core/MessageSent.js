@@ -49,6 +49,8 @@ module.exports = {
 
                     channel.send(`${gUser.user}, you leveled up!`);
                     channel.send(embed);
+
+                    client.emit('guildMemberLevelup', gUser, message.guild);
                 }
             }
         }
