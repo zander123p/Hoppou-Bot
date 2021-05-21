@@ -152,6 +152,7 @@ Discord.Guild.prototype.ensure = async function() {
                 prefix: process.env.PREFIX,
                 channels: [],
                 VCTracker: [],
+                levelMul: 0.435,
             },
         });
     
@@ -281,7 +282,9 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
 
 Discord.GuildMember.prototype.getLevel = async function() {
     const gUser = await this.ensure();
-    const level = Math.floor(0.435 * Math.sqrt((gUser.exp)? gUser.exp : 0));
+    const g = await this.guild.ensure();
+    const c = (g.settings.levelMul)? g.settings.levelMul : 0.435;
+    const level = Math.floor(c * Math.sqrt((gUser.exp)? gUser.exp : 0));
     return level;
 }
 

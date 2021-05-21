@@ -16,6 +16,7 @@ const guildSchema = mongoose.Schema({
         rejectChannel: String,
         rejectRole: String,
         rankupChannel: String,
+        levelMul: Number,
         modules: [String],
         ranks: [{id: String, level: Number}]
     },
