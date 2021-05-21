@@ -2,10 +2,9 @@ module.exports = {
     name: 'setlevelmul',
     description: 'Sets the level \'c\' value that\'s used in the level calculation. This can be used to make levels easier to harder to get.',
     guildOnly: true,
-    guildPermission: 'admin.setmute',
+    guildPermission: 'admin.setlevelmul',
     args: 1,
     usage: '<c value>',
-    aliases: ['setmute'],
     async execute(message, args) {
         const c = parseFloat(args[0]);
 
