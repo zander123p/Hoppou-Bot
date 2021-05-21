@@ -29,7 +29,7 @@ module.exports = {
                 }
 
                 let oldLevel = await gUser.getLevel();
-                user.exp += 1;
+                user.exp += 1 * (g.settings.expMul)? g.settings.expMul : 1;
                 await user.save();
                 let newLevel = await gUser.getLevel();
                 if (newLevel > oldLevel) {
