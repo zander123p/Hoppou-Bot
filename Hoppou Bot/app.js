@@ -71,6 +71,22 @@ fs.readdir('./events/perms/', (err, files) => {
     });
 });
 
+// Load the modules from the modules folder
+let modules = getDirectories('./Modules');
+modules.forEach(m => {
+    fs.readdir(`./Modules/${m}`, (err, files) => {
+        if (err) return console.error;
+        files.forEach(file => {
+            if (!file.endsWith('.js')) return;
+            const evt = require(`./Modules/${m}/${file}`);
+            if (!evt.eventType) return;
+            let moduleName = file.split('.')[0];
+            console.log(`Loaded Module: '${moduleName}'`);
+            client.on(evt.eventType, evt.event.bind(null, client));
+        });
+    });    
+});
+
 // // Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be got in the logs.
 // setInterval(async () => {
 //     client.guilds.cache.forEach(async (guild) => {
@@ -90,7 +106,7 @@ fs.readdir('./events/perms/', (err, files) => {
 //     });
 // }, 1000);
 
-// Important shit
+//! Important shit
 client.mongoose = require('./utils/mongoose');
 client.Guilds = require('./models/guild');
 client.UserProfiles = require('./models/user_profile');
