@@ -7,7 +7,7 @@ module.exports = {
     usage: '<message count>',
     aliases: ['prune'],
     async execute(message, args) {
-        const number = parseInt(args[0]);
+        let number = parseInt(args[0]);
 
         if (!number) {
             message.reply('please enter a valid number.').then(msg => msg.delete({ timeout: 5000 }));
