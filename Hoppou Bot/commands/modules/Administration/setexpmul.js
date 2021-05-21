@@ -1,10 +1,10 @@
 module.exports = {
-    name: 'setlevelmul',
-    description: 'Sets the level \'c\' value that\'s used in the level calculation. This can be used to make levels easier to harder to get.',
+    name: 'setexpmul',
+    description: 'Sets the exp multiplier.',
     guildOnly: true,
-    guildPermission: 'admin.setlevelmul',
+    guildPermission: 'admin.setexpmul',
     args: 1,
-    usage: '<c value>',
+    usage: '<multiplier>',
     async execute(message, args) {
         const c = parseFloat(args[0]);
 
@@ -14,7 +14,7 @@ module.exports = {
         }
 
         const guild = await message.guild.ensure();
-        guild.settings.levelMul = c;
+        guild.settings.expMul = c;
         await guild.save();
         
         message.react('✅');
