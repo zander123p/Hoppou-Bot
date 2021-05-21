@@ -22,7 +22,7 @@ module.exports = {
 
         let rank = g.settings.ranks.find(r => r.id === role);
 
-        g.settings.ranks.splice(g.ranks.indexOf(rank), 1);
+        g.settings.ranks.splice(g.settings.ranks.indexOf(rank), 1);
 
         await g.save();
 
