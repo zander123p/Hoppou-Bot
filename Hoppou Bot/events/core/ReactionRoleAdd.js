@@ -14,6 +14,26 @@ module.exports = {
             return;
         }
 
+        if (!emojiID) {
+            const unicode = /\p{Extended_Pictographic}/u.test(messageReaction.emoji.name);
+            if (unicode) {
+                const roleObj = msg.roles.find(r => r.emojiID === messageReaction.emoji.name);
+                if (!roleObj) return;
+
+                const roleID = roleObj.roleID;
+                const role = guild.roles.cache.get(roleID);
+                const gUser = guild.members.cache.get(user.id);
+        
+                if (gUser.roles.cache.find(r => r.id === roleID)) {
+                    return;
+                }
+        
+                gUser.roles.add(role);        
+            }
+
+            return;
+        }
+
         const roleObj = msg.roles.find(r => r.emojiID === emojiID);
         if (!roleObj) {
             return;
