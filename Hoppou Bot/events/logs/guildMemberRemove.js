@@ -20,6 +20,8 @@ module.exports = async (client, member) => {
         .addField('Member', member.user)
         .setTimestamp();
 
+    if (!channelLog) c.send(me);
+
     let oldLog = g.oldLogs.find(c => { if(channelLog.id === c.id) return c; });
     if (oldLog) return c.send(me);
 
