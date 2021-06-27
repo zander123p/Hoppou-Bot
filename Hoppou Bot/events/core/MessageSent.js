@@ -19,8 +19,17 @@ module.exports = {
             if (g.settings.rankupChannel) {
                 if (!user.exp) user.exp = 0;
 
+                if (client.cooldowns.get(message.author.id)) {
+                    return;
+                } else {
+                    client.cooldowns.set(message.author.id, true);
+                    setTimeout(() => {
+                        client.cooldowns.delete(message.author.id);
+                    }, 1000);
+                }
+
                 let oldLevel = await gUser.getLevel();
-                user.exp += 1;
+                user.exp += 1 * (g.settings.expMul)? g.settings.expMul : 1;
                 await user.save();
                 let newLevel = await gUser.getLevel();
                 if (newLevel > oldLevel) {
@@ -40,6 +49,8 @@ module.exports = {
 
                     channel.send(`${gUser.user}, you leveled up!`);
                     channel.send(embed);
+
+                    client.emit('guildMemberLevelup', gUser, message.guild);
                 }
             }
         }
