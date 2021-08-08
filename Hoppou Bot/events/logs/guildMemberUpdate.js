@@ -111,8 +111,9 @@ module.exports = async (client, oldMember, newMember) => {
             g.oldLogs[pos].id = channelLog.id.toString();
         }
         
-        await g.save();    
+        await g.save();
+        console.log(`${new Date().toLocaleString()}: ${oldLog}`);
 
-        c.send(meU);
+        if (!oldLog) return c.send(meU);
     }
 };
