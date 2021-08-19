@@ -3,8 +3,8 @@ module.exports = async (client, channel) => {
     if (channel.type === 'dm') return;
     const guild = await channel.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = channel.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await channel.guild.fetchAuditLogs({
@@ -30,6 +30,6 @@ module.exports = async (client, channel) => {
         .setAuthor(executor.tag, executor.displayAvatarURL())
         .addField('Channel', channel.name)
         .setTimestamp();
-    
-    c.send(meU);
+
+        c.send({ embeds: [meU] });
 };

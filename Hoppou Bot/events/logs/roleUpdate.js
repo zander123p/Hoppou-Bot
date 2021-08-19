@@ -1,9 +1,10 @@
 module.exports = async (client, oldRole, newRole) => {
     const { MessageEmbed } = require("discord.js");
+    const { userMention, memberNicknameMention, channelMention, roleMention } = require('@discordjs/builders');
     const guild = await oldRole.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = oldRole.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await oldRole.guild.fetchAuditLogs({
@@ -26,30 +27,31 @@ module.exports = async (client, oldRole, newRole) => {
 
     changes.forEach(change => {
         if(change.key === 'name') {
-            let meU = new MessageEmbed()
+            const meU = new MessageEmbed()
                 .setColor('#faea70')
                 .setTitle('Role Name Updated')
                 .setAuthor(executor.tag, executor.displayAvatarURL())
-                .addField(`Role`, newRole)
-                .addField(`Name`, `${change.old} -> ${change.new}`)
+                .addField('Role', roleMention(newRole.id))
+                .addField('Before', change.old)
+                .addField('After', change.new)
                 .setTimestamp();
-            c.send(meU);
+            c.send({ embeds: [meU] });
         } else if (change.key === 'color') {
-            let meU = new MessageEmbed()
+            const meU = new MessageEmbed()
                 .setColor('#faea70')
                 .setTitle('Role Colour Updated')
                 .setAuthor(executor.tag, executor.displayAvatarURL())
-                .addField(`Role`, newRole)
+                .addField('Role', roleMention(newRole.id))
                 .setTimestamp();
-            c.send(meU);
+            c.send({ embeds: [meU] });
         } else if (change.key === 'permissions') {
-            let meU = new MessageEmbed()
+            const meU = new MessageEmbed()
                 .setColor('#faea70')
                 .setTitle('Role Permissions Updated')
                 .setAuthor(executor.tag, executor.displayAvatarURL())
-                .addField(`Role`, newRole)
+                .addField('Role', roleMention(newRole.id))
                 .setTimestamp();
-            c.send(meU);
+            c.send({ embeds: [meU] });
         }
     });
 };

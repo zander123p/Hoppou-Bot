@@ -6,8 +6,8 @@ module.exports = {
     args: 2,
     usage: '<role id> <required level>',
     async execute(message, args) {
-        const role = args[0].match(/^<@&?(\d+)>$/)[1]; // Role ID
-        let level = args[1] // Level
+        const role = args[0].match(/^<@&?(\d+)>$/)[1];
+        let level = args[1];
 
         const g = await message.guild.ensure();
 
@@ -16,21 +16,21 @@ module.exports = {
             return message.react('❌');
         }
 
-        if (!(typeof(+level) === "number")) {
+        if (!(typeof (+level) === 'number')) {
             message.reply('please specify a number for the required level.').then(msg => msg.delete({ timeout: 5000 }));
             return message.react('❌');
         }
-        
+
         if (g.settings.ranks.find(r => r.id === role)) {
             message.reply('this rank is already setup.').then(msg => msg.delete({ timeout: 5000 }));
             return message.react('❌');
         }
 
         level = +level;
-        g.settings.ranks.push({id: role, level});
+        g.settings.ranks.push({ id: role, level });
 
         await g.save();
 
         message.react('✅');
-    }
-}
+    },
+};

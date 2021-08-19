@@ -1,28 +1,29 @@
 module.exports = {
     name: 'purge',
     description: 'Purge a set number of messages from a channel (capped at 30)',
-    guildOnly: true,
     guildPermission: 'mod.purge',
-    args: 1,
-    usage: '<message count>',
-    aliases: ['prune'],
-    async execute(message, args) {
-        let number = parseInt(args[0]);
-
-        if (!number) {
-            message.reply('please enter a valid number.').then(msg => msg.delete({ timeout: 5000 }));
-            return message.react('❌');
-        }
+    options: [
+        {
+            name: 'number',
+            type: 'NUMBER',
+            description: 'The amount of messages to purge',
+            required: true,
+        },
+    ],
+    async execute(interaction) {
+        let number = parseInt(interaction.options.get('number').value);
+        const channel = interaction.guild.channels.cache.get(interaction.channelId);
 
         if (number > 30)
             number = 30;
 
-        message.channel.bulkDelete(number+1)
+        channel.bulkDelete(number)
             .then((messages) => {
-                message.client.emit('messageDeleteBulk', messages, message.author);
+                interaction.client.emit('messageDeleteBulk', messages, interaction.user);
+                interaction.deferUpdate();
             }).catch(() => {
-                message.reply(`could not purge ${number} messages.`).then(msg => msg.delete({ timeout: 5000 }));
-                return message.react('❌');
+                const content = `could not purge ${number} messages.`;
+                return interaction.reply({ content, ephemeral: true });
             });
-    }
-}
+    },
+};

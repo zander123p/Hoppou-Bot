@@ -1,9 +1,10 @@
 module.exports = async (client, guild, user, moderator) => {
     const { MessageEmbed } = require("discord.js");
+    const { userMention, memberNicknameMention, channelMention, roleMention } = require('@discordjs/builders');
     const g = await guild.ensure();
     const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = guild.channels.cache.get(channelName);
 
     const fetchedLogs = await guild.fetchAuditLogs({
@@ -19,7 +20,7 @@ module.exports = async (client, guild, user, moderator) => {
         .addField('Member', user.tag)
         .setTimestamp();
 
-    if (!channelLog) return c.send(me);
+    if (!channelLog) return c.send({ embeds: [me] });
 
     const { executor } = channelLog;
 
@@ -34,8 +35,8 @@ module.exports = async (client, guild, user, moderator) => {
         .setColor('#70f567')
         .setTitle('Member Unbanned')
         .setAuthor(moderator.tag, moderator.displayAvatarURL())
-        .addField('Member', user)
+        .addField('Member', userMention(user.id))
         .setTimestamp();
-    
-    c.send(meU);
+
+    c.send({ embeds: [meU] });
 };

@@ -41,7 +41,7 @@ function isValidModule(m) {
 // Gets all directories in a path
 function getDirectories(path) {
     const fs = require('fs');
-    return fs.readdirSync(path).filter(function (file) {
+    return fs.readdirSync(path).filter(function(file) {
       return fs.statSync(path+'/'+file).isDirectory();
     });
 }

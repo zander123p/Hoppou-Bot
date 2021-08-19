@@ -2,8 +2,8 @@ module.exports = async (client, oldEmoji, newEmoji) => {
     const { MessageEmbed } = require("discord.js");
     const guild = await oldEmoji.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = oldEmoji.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await oldEmoji.guild.fetchAuditLogs({
@@ -29,6 +29,6 @@ module.exports = async (client, oldEmoji, newEmoji) => {
         .setAuthor(executor.tag, executor.displayAvatarURL())
         .addField('Emoji', `${oldEmoji.name} -> ${newEmoji.name}`)
         .setTimestamp();
-    
-    c.send(meU);
+
+    c.send({ embeds: [meU] });
 };

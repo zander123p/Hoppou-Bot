@@ -2,8 +2,8 @@ module.exports = async (client, oldGuild, newGuild) => {
     const { MessageEmbed } = require("discord.js");
     const guild = await oldGuild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = newGuild.channels.cache.get(channelName);
 
     const fetchedLogs = await oldGuild.fetchAuditLogs({
@@ -23,13 +23,13 @@ module.exports = async (client, oldGuild, newGuild) => {
     const { executor, changes } = channelLog;
     changes.forEach(change => {
         if(change.key === 'name') {
-            let meU = new MessageEmbed()
+            const meU = new MessageEmbed()
                 .setColor('#faea70')
                 .setTitle('Guild Name Updated')
                 .setAuthor(executor.tag, executor.displayAvatarURL())
-                .addField(`Name`, `${change.old} -> ${change.new}`)
+                .addField('Name', `${change.old} -> ${change.new}`)
                 .setTimestamp();
-            c.send(meU);
+            c.send({ embeds: [meU] });
         }
     });
 };

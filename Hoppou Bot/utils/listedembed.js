@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = class ListedEmbed {
     constructor() {
@@ -18,14 +18,14 @@ module.exports = class ListedEmbed {
         this.embed.setColor(colour);
         return this;
     }
-    
+
     setAuthor(author, icon = '', url = '') {
         this.embed.setAuthor(author, icon, url);
         return this;
     }
 
     setDescription(description) {
-        this.embed.setDescription(description)
+        this.embed.setDescription(description);
         return this;
     }
 
@@ -48,7 +48,7 @@ module.exports = class ListedEmbed {
     }
 
     addField(title, value, inline = false) {
-        this.fields.push({title, value, inline});
+        this.fields.push({ title, value, inline });
         this.fieldCount++;
         return this;
     }
@@ -58,7 +58,7 @@ module.exports = class ListedEmbed {
         this.fieldCount = 0;
     }
 
-    send(channel, maxSize = 25) {
+    send(interaction, maxSize = 25) {
         if (maxSize > 25)
             maxSize = 25;
         if (maxSize < 1)
@@ -70,20 +70,33 @@ module.exports = class ListedEmbed {
                 this.embed.addField(this.fields[i].title, this.fields[i].value, this.fields[i].inline);
             }
             this.embed.setFooter(`Page: ${this.page}/${Math.ceil(this.fieldCount / this.maxSize)}`);
-            channel.send(this.embed).then(async msg => {
-                msg.react('⬅️').then(() => msg.react('➡️'));
-                const filter = (reaction, user) => {
-                    return !user.bot;
+
+            const row = new MessageActionRow()
+                .addComponents(
+                    new MessageButton()
+                        .setLabel('Previous')
+                        .setCustomId('pre')
+                        .setStyle('PRIMARY'),
+                    new MessageButton()
+                        .setLabel('Next')
+                        .setCustomId('nxt')
+                        .setStyle('PRIMARY'),
+                );
+
+            interaction.reply({ embeds: [this.embed], components: [row] });
+            interaction.fetchReply().then(async msg => {
+                const filter = (i) => {
+                    return !i.user.bot;
                 };
-                this.collector = msg.createReactionCollector(filter, { time: 15000 });
-                this.collector.on('collect', this.react.bind(null, this));
+                this.collector = msg.createMessageComponentCollector({ filter, time: 15000 });
+                this.collector.on('collect', this.action.bind(null, this));
                 this.collector.on('end', this.end.bind(null, msg));
             });
         } else {
             this.fields.forEach(field => {
-                this.embed.addField(field.title, field.value, field.inline);
+                this.embed.addField(field.title.toString(), field.value.toString(), field.inline);
             });
-            channel.send(this.embed);
+            interaction.reply({ embeds: [this.embed] });
         }
     }
 
@@ -91,33 +104,29 @@ module.exports = class ListedEmbed {
         LE.embed.fields = [];
         LE.embed.setFooter(`Page: ${LE.page}/${Math.ceil(LE.fieldCount / LE.maxSize)}`);
         for (let i = 0; i < LE.maxSize; i++) {
-            let pagedIndex = i + (LE.maxSize * (LE.page-1));
+            const pagedIndex = i + (LE.maxSize * (LE.page - 1));
             try {
-                LE.embed.addField(LE.fields[pagedIndex].title, LE.fields[pagedIndex].value, LE.fields[pagedIndex].inline);
-            } catch {
-
+                LE.embed.addField(LE.fields[pagedIndex].title.toString(), LE.fields[pagedIndex].value.toString(), LE.fields[pagedIndex].inline);
+            } catch (err) {
+                console.log(err);
             }
         }
-        msg.edit(LE.embed);
+        msg.edit({ embeds: [LE.embed] });
     }
 
-    async react(LE, reaction, user) {
-        if (reaction.emoji.name === '⬅️') {
-            LE.page = (LE.page - 1 < 1)? Math.ceil(LE.fieldCount / LE.maxSize) : LE.page - 1;
-            await reaction.users.remove(user.id);
+    async action(LE, i) {
+        if (i.customId === 'pre') {
+            LE.page = (LE.page - 1 < 1) ? Math.ceil(LE.fieldCount / LE.maxSize) : LE.page - 1;
             LE.collector.resetTimer();
-        } else if (reaction.emoji.name === '➡️') {
-            LE.page = (LE.page + 1 > Math.ceil(LE.fieldCount / LE.maxSize))? 1 : LE.page + 1;
-            await reaction.users.remove(user.id);
+        } else if (i.customId === 'nxt') {
+            LE.page = (LE.page + 1 > Math.ceil(LE.fieldCount / LE.maxSize)) ? 1 : LE.page + 1;
             LE.collector.resetTimer();
         }
-        LE.applyPage(reaction.message, LE);
+        i.deferUpdate();
+        LE.applyPage(i.message, LE);
     }
 
     async end(msg) {
-        const botReact = msg.reactions.cache.filter(reaction => reaction.users.cache.has(msg.author.id))
-        for (const reaction of botReact.values()) {
-            await reaction.users.remove(msg.author.id);
-        }
+        msg.edit({ components: [] });
     }
-}
+};
