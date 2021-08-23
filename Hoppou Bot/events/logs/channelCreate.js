@@ -1,10 +1,12 @@
 module.exports = async (client, channel) => {
     const { MessageEmbed } = require("discord.js");
+    const { userMention, memberNicknameMention, channelMention, roleMention } = require('@discordjs/builders');
+
     if (channel.type === 'dm') return;
     const guild = await channel.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = channel.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await channel.guild.fetchAuditLogs({
@@ -17,7 +19,7 @@ module.exports = async (client, channel) => {
     const me = new MessageEmbed()
         .setColor('#70f567')
         .setTitle('Channel Created')
-        .addField('Channel', channel)
+        .addField('Channel', channelMention(channel.id))
         .setTimestamp();
 
     if (!channelLog) return c.send(me);
@@ -28,8 +30,8 @@ module.exports = async (client, channel) => {
         .setColor('#70f567')
         .setTitle('Channel Created')
         .setAuthor(executor.tag, executor.displayAvatarURL())
-        .addField('Channel', channel)
+        .addField('Channel', channelMention(channel.id))
         .setTimestamp();
-    
-    c.send(meU);
+
+    c.send({ embeds: [meU] });
 };

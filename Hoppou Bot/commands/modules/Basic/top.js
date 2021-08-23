@@ -1,36 +1,63 @@
 module.exports = {
     name: 'top',
     description: 'Get the top 10 of a category.',
-    guildOnly: true,
-    usage: '[messages | vc] [all]',
-    aliases: ['leaderboard'],
-    async execute(message, args) {
+    options: [
+        {
+            name: 'category',
+            description: 'Category to view',
+            type: 'STRING',
+            choices: [
+                {
+                    name: 'Messages',
+                    value: 'tp_messages',
+                },
+                {
+                    name: 'VCs',
+                    value: 'tp_vc',
+                },
+            ],
+            required: false,
+        },
+        {
+            name: 'all',
+            type: 'BOOLEAN',
+            description: 'Whether to view all of that category',
+        },
+    ],
+    async execute(interaction) {
         const ListedEmbed = require('../../../utils/listedembed');
-        const members = await message.client.GuildUsers.find({guildID: message.guild.id});
+        const members = await interaction.client.GuildUsers.find({ guildID: interaction.member.guild.id });
+        let cat;
+        let all;
+        if (interaction.options.get('category'))
+            cat = interaction.options.get('category').value;
+        if (interaction.options.get('all'))
+            all = interaction.options.get('all').value;
+
+        const guild = interaction.member.guild;
 
         if (members.length === 0) {
-            message.reply('no valid users found').then(msg => msg.delete({ timeout: 5000 }));
-            return message.react('❌');
+            return interaction.reply({ content: 'no valid users found', ephemeral: true });
         }
 
-        if (args.length === 0 || args[0].toLowerCase() === 'all' || args[0].toLowerCase() === 'messages') {
-            const sortUsers = await message.client.GuildUsers.find({guildID: message.guild.id}).sort({messages: -1});
+        if ((!cat && !all) || all || cat === 'tp_messages') {
+            const sortUsers = await interaction.client.GuildUsers.find({ guildID: guild.id }).sort({ messages: -1 });
 
             const embed = new ListedEmbed()
                 .setColor('#9a3deb')
                 .setTitle('Top Message Senders');
 
-            let displayCount = (sortUsers.length < 10 || ((args[1])? args[1].toLowerCase() : '') === 'all' || ((args[0])? args[0].toLowerCase() : '') === 'all')? sortUsers.length : 10;
+            const displayCount = (sortUsers.length < 10 || all) ? sortUsers.length : 10;
 
             for (let i = 0; i < displayCount; i++) {
-                const member = message.guild.members.cache.get(sortUsers[i].userID);
+                const member = guild.members.cache.get(sortUsers[i].userID);
                 if (!member) continue;
-                embed.addField(`${member.user.tag}`, `Rank: #${i+1}\nMessages: ${sortUsers[i].messages}`);
+                embed.addField(`${member.user.tag}`, `Rank: #${i + 1}\nMessages: ${sortUsers[i].messages}`);
             }
 
-            embed.send(message.channel, 10);
-        } else if (args[0].toLowerCase() === 'vc') {
-            const users = await message.client.GuildUsers.find({guildID: message.guild.id});
+            embed.send(interaction, 10);
+        } else if (cat === 'tp_vc') {
+            const users = await interaction.client.GuildUsers.find({ guildID: guild.id });
 
             let sortUsers = [];
             users.forEach(user => {
@@ -51,21 +78,21 @@ module.exports = {
                 .setColor('#9a3deb')
                 .setTitle('Top Voice Channel Spenders');
 
-            let displayCount = (sortUsers.length < 10)? sortUsers.length : 10;
+            const displayCount = (sortUsers.length < 10) ? sortUsers.length : 10;
 
             for (let i = 0; i < displayCount; i++) {
-                const member = message.guild.members.cache.get(sortUsers[i].userID);
-                embed.addField(`${member.user.tag}`, (`Rank: #${i+1}\n${
-                    (sortUsers[i].VCTracker.length === 1)? `${
-                        message.guild.channels.cache.get(sortUsers.VCTracker[0].id).name
+                const member = guild.members.cache.get(sortUsers[i].userID);
+                embed.addField(`${member.user.tag}`, (`Rank: #${i + 1}\n${
+                    (sortUsers[i].VCTracker.length === 1) ? `${
+                        guild.channels.cache.get(sortUsers.VCTracker[0].id).name
                     }: ${sortUsers[i].VCTracker[0].mins} Minutes` : sortUsers[i].VCTracker.map((VCT, j) => {
-                        const vc = message.guild.channels.cache.get(VCT.id);
+                        const vc = guild.channels.cache.get(VCT.id);
 
-                        return (`${vc.name}: ${VCT.mins} Minutes${(sortUsers[i].VCTracker.length !== j+1)? '\n' : ''}`)
+                        return (`${vc.name}: ${VCT.mins} Minutes${(sortUsers[i].VCTracker.length !== j + 1) ? '\n' : ''}`);
                 })}`).replace(/,/g, ''));
             }
 
-            embed.send(message.channel, 1);
+            embed.send(interaction, 1);
         }
-    }
-}
+    },
+};

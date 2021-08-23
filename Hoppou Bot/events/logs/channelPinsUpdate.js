@@ -1,9 +1,11 @@
 module.exports = async (client, channel, time) => {
     if (channel.type === 'dm') return;
+    const { userMention, memberNicknameMention, channelMention, roleMention } = require('@discordjs/builders');
+
     const guild = await channel.guild.ensure();
     const chnl = guild.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = channel.guild.channels.cache.get(channelName);
 
     const { MessageEmbed } = require("discord.js");
@@ -22,10 +24,10 @@ module.exports = async (client, channel, time) => {
     const me = new MessageEmbed()
         .setColor('#faea70')
         .setTitle('Channel Pins Update')
-        .addField('Channel', channel)
+        .addField('Channel', channelMention(channel.id))
         .setTimestamp();
 
-    if (!channelLog) return c.send(me);
+    if (!channelLog) return c.send({ embeds: [me] });
 
     const { executor } = channelLog;
     const { messageID } = channelLog.extra;
@@ -43,7 +45,7 @@ module.exports = async (client, channel, time) => {
         .setColor('#faea70')
         .setTitle('Channel Pins Update - Message Pinned')
         .setAuthor(executor.tag, executor.displayAvatarURL())
-        .addField('Channel', channel)
+        .addField('Channel', channelMention(channel.id))
         .addField('Message', message.content)
         .addField('Jump', `https://discordapp.com/channels/${channel.guild.id}/${channel.id}/${message.id}`)
         .setTimestamp();
@@ -52,13 +54,13 @@ module.exports = async (client, channel, time) => {
         .setColor('#faea70')
         .setTitle('Channel Pins Update - Message Un-Pinned')
         .setAuthor(executor2.tag, executor2.displayAvatarURL())
-        .addField('Channel', channel)
+        .addField('Channel', channelMention(channel.id))
         .addField('Message', message2.content)
         .addField('Jump', `https://discordapp.com/channels/${channel.guild.id}/${channel.id}/${message2.id}`)
         .setTimestamp();
-        
+
     if (pinMessage.id == messageID)
-        c.send(meUP);
+        c.send({ embeds: [meUP] });
     else
-        c.send(meU);
+        c.send({ embeds: [meU] });
 };

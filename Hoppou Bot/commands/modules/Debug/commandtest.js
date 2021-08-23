@@ -14,8 +14,30 @@ module.exports = {
                 },
             ],
         },
+        {
+            name: 'remove',
+            description: 'command desc',
+            type: 'SUB_COMMAND',
+            options: [
+                {
+                    name: 'permission',
+                    description: 'Permission to remove',
+                    type: 'STRING',
+                },
+            ],
+        },
     ],
     execute(interaction) {
-        console.log(interaction);
+        const ListedMenu = require('../../../utils/listedmenu');
+
+        const menu = new ListedMenu((i) => {
+            console.log(i);
+        }).setCustomId('a');
+
+        for (let i = 0; i < 50; i++) {
+            menu.addOption(i.toString(), 'a', 'description ' + i);
+        }
+
+        menu.send(interaction);
     },
 };

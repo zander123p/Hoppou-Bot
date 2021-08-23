@@ -1,7 +1,7 @@
 module.exports = {
-    eventType: 'message',
+    eventType: 'messageCreate',
     async event(client, message) {
-        if (message.author.bot) return; // Check not self or bot
+        if (message.author.bot) return;
         const user = await message.guild.members.cache.get(message.author.id).ensure();
         const gUser = await message.guild.members.cache.get(message.author.id);
         let prefix;
@@ -28,27 +28,27 @@ module.exports = {
                     }, 1000);
                 }
 
-                let oldLevel = await gUser.getLevel();
-                user.exp += 1 * (g.settings.expMul)? g.settings.expMul : 1;
+                const oldLevel = await gUser.getLevel();
+                user.exp += 1 * (g.settings.expMul) ? g.settings.expMul : 1;
                 await user.save();
-                let newLevel = await gUser.getLevel();
+                const newLevel = await gUser.getLevel();
                 if (newLevel > oldLevel) {
                     const channel = message.guild.channels.cache.get(g.settings.rankupChannel);
                     const {
-                        MessageEmbed
-                    } = require("discord.js");
+                        MessageEmbed,
+                    } = require('discord.js');
                     const embed = new MessageEmbed()
                         .setColor('#9a3deb')
-                        .setTitle(`Level up`)
+                        .setTitle('Level up')
                         .setTimestamp()
                         .setThumbnail(gUser.user.displayAvatarURL({
-                            size: 1024
+                            size: 1024,
                         }));
 
-                    embed.addField(`Level`, newLevel);
+                    embed.addField('Level', newLevel);
 
                     channel.send(`${gUser.user}, you leveled up!`);
-                    channel.send(embed);
+                    channel.send({ embeds: [embed] });
 
                     client.emit('guildMemberLevelup', gUser, message.guild);
                 }
@@ -57,9 +57,7 @@ module.exports = {
 
         try {
             await user.save();
-        } catch {
-
-        }
+        } catch (err) { console.log(err); }
 
         if (!message.content.toLowerCase().startsWith(prefix)) return;
 
@@ -72,21 +70,21 @@ module.exports = {
 
         if (command.guildOnly && message.channel.type === 'dm') return message.reply('I can\'t execute that command inside DMs!');
 
-        //if (message.guild && !message.guild.member(message.author).hasPermission(command.permissions)) return message.reply('you don\'t have the required permissions to run that command!');
+        // if (message.guild && !message.guild.member(message.author).hasPermission(command.permissions)) return message.reply('you don\'t have the required permissions to run that command!');
 
-        if (message.guild && !await message.guild.member(message.author).hasGuildPermission(command.guildPermission)) return message.reply('you don\'t have the required permissions to run that command!').then(msg => msg.delete({
-            timeout: 5000
+        if (message.guild && !await message.guild.members.cache.get(message.author.id).hasGuildPermission(command.guildPermission)) return message.reply('you don\'t have the required permissions to run that command!').then(msg => msg.delete({
+            timeout: 5000,
         }));
 
         if (command.args && !args.length || args.length < command.args) {
-            let reply = (args.length < command.args && args.length != 0) ? `you didn't provide enough arguments!` : `you didn't provide any arguments!`;
+            let reply = (args.length < command.args && args.length != 0) ? 'you didn\'t provide enough arguments!' : 'you didn\'t provide any arguments!';
 
             if (command.usage) {
                 reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
             }
 
             return message.reply(reply).then(msg => msg.delete({
-                timeout: 5000
+                timeout: 5000,
             }));
         }
 
@@ -95,8 +93,8 @@ module.exports = {
         } catch (error) {
             console.error(error);
             message.reply('there was an error running this command!').then(msg => msg.delete({
-                timeout: 5000
+                timeout: 5000,
             }));
         }
-    }
+    },
 };

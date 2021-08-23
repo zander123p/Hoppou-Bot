@@ -1,10 +1,11 @@
 module.exports = async (client, messages, moderator) => {
     const { MessageEmbed } = require("discord.js");
+    const { userMention, memberNicknameMention, channelMention, roleMention } = require('@discordjs/builders');
     const guild = messages.first().guild;
     const g = await guild.ensure();
     const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = guild.channels.cache.get(channelName);
 
     const fetchedLogs = await guild.fetchAuditLogs({
@@ -19,11 +20,11 @@ module.exports = async (client, messages, moderator) => {
     const me = new MessageEmbed()
         .setColor('#db4444')
         .setTitle('Message Purge')
-        .addField('Channel', channel)
-        .addField('Number of Messages Deleted', messages.size-1)
+        .addField('Channel', channelMention(channel.id))
+        .addField('Number of Messages Deleted', messages.size - 1)
         .setTimestamp();
 
-    if (!channelLog) return c.send(me);
+    if (!channelLog) return c.send({ embeds: [me] });
 
     const { executor } = channelLog;
 
@@ -38,9 +39,9 @@ module.exports = async (client, messages, moderator) => {
         .setColor('#db4444')
         .setTitle('Message Purge')
         .setAuthor(moderator.tag, moderator.displayAvatarURL())
-        .addField('Channel', channel)
-        .addField('Number of Messages Deleted', messages.size-1)
+        .addField('Channel', channelMention(channel.id))
+        .addField('Number of Messages Deleted', messages.size - 1)
         .setTimestamp();
-    
-    c.send(meU);
+
+    c.send({ embeds: [meU] });
 };

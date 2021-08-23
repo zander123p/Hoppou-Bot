@@ -1,9 +1,10 @@
 module.exports = async (client, member, moderator) => {
-    const { MessageEmbed } = require("discord.js");
+    const { MessageEmbed } = require('discord.js');
+    const { userMention, memberNicknameMention, channelMention, roleMention } = require('@discordjs/builders');
     const g = await member.guild.ensure();
     const chnl = g.settings.channels.find(c => { if(c.logs.includes(module.exports.id)) return c; });
+    if (!chnl) return;
     const channelName = chnl.name;
-    if (!channelName) return;
     const c = member.guild.channels.cache.get(channelName);
 
     const fetchedLogs = await member.guild.fetchAuditLogs({
@@ -19,7 +20,7 @@ module.exports = async (client, member, moderator) => {
         .addField('Member', member.user.tag)
         .setTimestamp();
 
-    if (!channelLog) return c.send(me);
+    if (!channelLog) return c.send({ embeds: [me] });
 
     const { executor } = channelLog;
 
@@ -34,11 +35,11 @@ module.exports = async (client, member, moderator) => {
         .setColor('#db4444')
         .setTitle('Member Kicked')
         .setAuthor(moderator.tag, moderator.displayAvatarURL())
-        .addField('Member', member.user)
+        .addField('Member', userMention(member.user.id))
         .addField('Reason', channelLog.reason)
-        .setTimestamp();    
+        .setTimestamp();
 
-    c.send(meU);
+    c.send({ embeds: [meU] });
 
     // Handle ban in database
 
@@ -51,7 +52,7 @@ module.exports = async (client, member, moderator) => {
         guildID: member.guild.id,
         type: 'kick',
         moderator: moderator.id,
-        reason: channelLog.reason
+        reason: channelLog.reason,
     });
     await log.save();
     userProfile.kicks.push(newActionId);
