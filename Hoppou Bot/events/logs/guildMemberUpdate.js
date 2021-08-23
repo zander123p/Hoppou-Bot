@@ -111,9 +111,9 @@ module.exports = async (client, oldMember, newMember) => {
         } else {
             g.oldLogs[pos].id = channelLog.id.toString();
         }
-
+        
         await g.save();
 
-        c.send({ embeds: [meU] });
+        if (!oldLog) return c.send({ embeds: [meU] });
     }
 };
