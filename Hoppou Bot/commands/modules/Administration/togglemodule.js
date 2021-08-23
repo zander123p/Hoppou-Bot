@@ -10,25 +10,30 @@ module.exports = {
 
         const guild = await message.guild.ensure();
 
-        guild.settings.modules.forEach(async m => {
-            if (m === name) {
-                guild.settings.modules.splice(guild.modules.indexOf(m), 1);
-                await guild.save();
-                return message.react('✅');
-            } else if (isValidModule(name)) {
-                guild.settings.modules.push(name);
-                await guild.save();
-                return message.react('✅');
-            } else {
-                message.reply('please enter a valid module.').then(msg => msg.delete({ timeout: 5000 }));
-                return message.react('❌');
-            }
-        });
-
         if (guild.settings.modules.length === 0 && isValidModule(name)) {
             guild.settings.modules = [name];
+            console.log('Test 1');
             await guild.save();
             return message.react('✅');
+        } else if (!guild.settings.modules.includes(name)) {
+            guild.settings.modules.push(name);
+            await guild.save();
+            return message.react('✅');
+        }
+        
+        let success = false;
+        guild.settings.modules.forEach(async m => {
+            if (m === name) {
+                guild.settings.modules.splice(guild.settings.modules.indexOf(m), 1);
+                success = true;
+                await guild.save();
+                return message.react('✅');
+            }
+        });
+        
+        if (!success) {
+            message.reply('please enter a valid module.').then(msg => msg.delete({ timeout: 5000 }));
+            return message.react('❌');
         }
     }
 }

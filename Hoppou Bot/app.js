@@ -11,6 +11,8 @@ client.cooldowns = new Discord.Collection();
 
 client.VCTracker = new Discord.Collection();
 
+client.modules = [];
+
 
 // Gather all commands from all modules and set the category to the module folder's name
 for (const folder of getDirectories('./commands/modules')) {
@@ -71,23 +73,27 @@ fs.readdir('./events/perms/', (err, files) => {
     });
 });
 
-// Load the modules from the modules folder
-let modules = getDirectories('./Modules');
-modules.forEach(m => {
-    fs.readdir(`./Modules/${m}`, (err, files) => {
-        if (err) return console.error;
-        files.forEach(file => {
-            if (!file.endsWith('.js')) return;
-            const evt = require(`./Modules/${m}/${file}`);
-            if (!evt.eventType) return;
-            let moduleName = file.split('.')[0];
-            console.log(`Loaded Module: '${moduleName}'`);
-            client.on(evt.eventType, evt.event.bind(null, client));
-        });
-    });    
-});
+// // Load the modules from the modules folder
+// let modules = getDirectories('./Modules');
+// client.modules = modules;
+// modules.forEach(m => {
+//     fs.readdir(`./Modules/${m}`, (err, files) => {
+//         if (err) return console.error;
+//         files.forEach(file => {
+//             if (!file.endsWith('.js')) return;
+//             const evt = require(`./Modules/${m}/${file}`);
+//             if (!evt.eventType) return;
+//             let moduleName = file.split('.')[0];
+//             console.log(`Loaded Module: '${moduleName}'`);
+//             client.on(evt.eventType, evt.event.bind(null, client));
+//         });
+//     });    
+// });
 
-// // Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be got in the logs.
+const ModuleLoader = require('./Modules/ModuleLoader');
+ModuleLoader.LoadModules(client);
+
+// // Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be gotten in the logs.
 // setInterval(async () => {
 //     client.guilds.cache.forEach(async (guild) => {
 //         const g = await guild.ensure();
@@ -287,7 +293,6 @@ Discord.GuildMember.prototype.getLevel = async function() {
     const level = Math.floor(c * Math.sqrt((gUser.exp)? gUser.exp : 0));
     return level;
 }
-
 
 client.mongoose.init(); // Init database shit
 client.login(process.env.TOKEN); // Do I even need to?

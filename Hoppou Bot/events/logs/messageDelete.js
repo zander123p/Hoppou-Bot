@@ -44,7 +44,7 @@ module.exports = async (client, message) => {
         .setAuthor(message.author.tag, message.author.displayAvatarURL())
         .addField('Message Author', message.author)
         .addField('Channel', message.channel)
-        .addField('Message', message)
+        .addField('Message', message.toString())
         .addField(`Jump to message`,`[Jump](https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`)
         .setTimestamp();
 

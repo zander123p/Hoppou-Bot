@@ -32,7 +32,7 @@ module.exports = {
                 messageID: msg.id
             });
 
-            msg.react('✅').then(msg.react('❌'));
+            msg.react('✅').then(msg.react('🟦')).then(msg.react('❌'));
             await log.save();
         });
     }
