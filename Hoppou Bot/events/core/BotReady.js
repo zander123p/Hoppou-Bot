@@ -56,7 +56,7 @@ module.exports = {
                         message.delete();
                         await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
                     }
-    
+                    
                     if (user.roles.cache.has(guild.roles.cache.get(g.settings.newcommerRole))) {
                         message.delete();
                         await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
