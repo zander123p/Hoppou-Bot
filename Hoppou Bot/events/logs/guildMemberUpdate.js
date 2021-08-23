@@ -113,7 +113,6 @@ module.exports = async (client, oldMember, newMember) => {
         }
         
         await g.save();
-
         if (!oldLog) return c.send({ embeds: [meU] });
     }
 };

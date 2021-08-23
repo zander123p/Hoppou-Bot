@@ -12,6 +12,8 @@ client.cooldowns = new Discord.Collection();
 
 client.VCTracker = new Discord.Collection();
 
+client.modules = [];
+
 
 // Gather all commands from all modules and set the category to the module folder's name
 for (const folder of getDirectories('./commands/modules')) {
@@ -88,7 +90,27 @@ modules.forEach(m => {
 	});
 });
 
-// // Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be got in the logs.
+// // Load the modules from the modules folder
+// let modules = getDirectories('./Modules');
+// client.modules = modules;
+// modules.forEach(m => {
+//     fs.readdir(`./Modules/${m}`, (err, files) => {
+//         if (err) return console.error;
+//         files.forEach(file => {
+//             if (!file.endsWith('.js')) return;
+//             const evt = require(`./Modules/${m}/${file}`);
+//             if (!evt.eventType) return;
+//             let moduleName = file.split('.')[0];
+//             console.log(`Loaded Module: '${moduleName}'`);
+//             client.on(evt.eventType, evt.event.bind(null, client));
+//         });
+//     });    
+// });
+
+const ModuleLoader = require('./Modules/ModuleLoader');
+ModuleLoader.LoadModules(client);
+
+// // Designed to fill in for the [MEMEBER UPDATE] which doesn't fire on everything that it can be gotten in the logs.
 // setInterval(async () => {
 //     client.guilds.cache.forEach(async (guild) => {
 //         const g = await guild.ensure();
@@ -242,6 +264,20 @@ Discord.GuildMember.prototype.getGuildPermissionGroups = async function() {
 	groups = groups.filter(element => element !== undefined);
 	return groups;
 };
+
+Discord.GuildMember.prototype.getGuildPermissionGroups = async function() {
+    let groups = [];
+    const guild = await this.guild.ensure();
+
+    const roles = this.roles.cache;
+    roles.forEach(r => {
+        groups.push(guild.permissionGroups.filter(g => {
+            if (g.role === r.id) return g;
+        })[0]);
+    });
+    groups = groups.filter(element => element !== undefined);
+    return groups;
+}
 
 Discord.GuildMember.prototype.hasGuildPermission = async function(permission, role = true) {
 	if (!permission || await this.guild.fetchOwner() === this) {return true;}

@@ -8,7 +8,12 @@ module.exports = {
             if (role.first().id === g.settings.newcommerRole) {
                 const msg = await client.GuildNewJoins.findOne({ userID: oldMember.id, guildID: oldMember.guild.id })
                 const channel = oldMember.guild.channels.cache.get(g.settings.newcommerChannel);
-                const message = await channel.messages.fetch(msg.messageID);
+                let message;
+                try {
+                    message = await channel.messages.fetch(msg.messageID);
+                } catch (err) {
+                    return;
+                }
                 message.delete();
                 await client.GuildNewJoins.findOneAndDelete({ messageID: message.id });
             }

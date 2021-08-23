@@ -7,15 +7,19 @@ module.exports = {
         const ListedEmbed = require('../../../utils/listedembed');
         const { commands } = message.client;
         let g;
-        if (message.guild)
-            g = await message.guild.ensure();
-    
+        if (!message.guild) return;
+        
+        g = await message.guild.ensure();
+        
+        const permGroups = await message.guild.members.cache.get(message.author.id).getGuildPermissionGroups();
+
         if (!args.length) {
             const embed = new ListedEmbed()
                 .setColor('#9a3deb')
                 .setTitle(`Help - Catagories`);
             
             message.client.commands.categories.forEach(category => {
+                
                 embed.addField(category, `${g.settings.prefix}help ${category}`);
             });
 
