@@ -6,7 +6,7 @@ module.exports = {
     args: 1,
     usage: '<module>',
     async execute(message, args) {
-        const name = args[0]; // Module
+        const name = args[0];
 
         const guild = await message.guild.ensure();
 
@@ -30,11 +30,11 @@ module.exports = {
             await guild.save();
             return message.react('✅');
         }
-    }
-}
+    },
+};
 
 function isValidModule(m) {
-    let modules = getDirectories('./Modules');
+    const modules = getDirectories('./Modules');
     return modules.find(d => d.toLowerCase() === m.toLowerCase());
 }
 
@@ -42,6 +42,6 @@ function isValidModule(m) {
 function getDirectories(path) {
     const fs = require('fs');
     return fs.readdirSync(path).filter(function(file) {
-      return fs.statSync(path+'/'+file).isDirectory();
+      return fs.statSync(path + '/' + file).isDirectory();
     });
 }
