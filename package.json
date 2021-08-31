@@ -40,5 +40,8 @@
   "homepage": "https://github.com/zander123p/Hoppou-Bot#readme",
   "devDependencies": {
     "eslint": "^7.29.0"
+  },
+  "engines": {
+    "node": "16.*"
   }
 }
