@@ -2,10 +2,20 @@ module.exports = {
 	name: 'deploy',
 	description: 'Deploy slash commands on specific guild.',
 	guildOnly: true,
+	options: [
+		{
+			name: 'command',
+			type: 'STRING',
+			description: 'The command to deploy',
+			required: true,
+		},
+	],
 	async execute(message, args) {
-		if (message.author.id !== '99604105298731008') {
-			return message.react('❌');
-		}
+		// if (interaction.user.id !== '99604105298731008') {
+		// 	return;
+		// }
+
+		// const cmd = interaction.options.getString('command');
 
 		// const data = [
 		//     {
@@ -69,25 +79,36 @@ module.exports = {
 			return message.react('✅');
 		}
 
-		if (process.env.DEV === 'true') {
-			await message.client.commands.forEach(async c => {
-				if (c.options) {
-					const command = await message.channel.guild.commands.create({ name: c.name, description: c.description, options: c.options });
-					console.log(command);
-				}
-				else {
-					const command = await message.channel.guild.commands.create({ name: c.name, description: c.description });
-					console.log(command);
-				}
+		// const c = interaction.client.commands.find(com => com.name === cmd);
+		// if (c.options) {
+		// 	const command = await interaction.channel.guild.commands.create({ name: c.name, description: c.description, options: c.options });
+		// 	console.log(command);
+		// }
+		// else {
+		// 	const command = await interaction.channel.guild.commands.create({ name: c.name, description: c.description });
+		// 	console.log(command);
+		// }
+		// interaction.reply({ content: `Command Deployed: ${cmd}`, ephemeral: true });
 
-				if (message.client.commands.length === message.client.commands.indexOf(c) + 1) {
-					await message.react('✅');
-				}
-			});
-		}
-		else {
-			// const command = await message.client.application?.set(data);
-		}
+		// if (process.env.DEV === 'true') {
+		// 	await message.client.commands.forEach(async c => {
+		// 		if (c.options) {
+		// 			const command = await message.channel.guild.commands.create({ name: c.name, description: c.description, options: c.options });
+		// 			console.log(command);
+		// 		}
+		// 		else {
+		// 			const command = await message.channel.guild.commands.create({ name: c.name, description: c.description });
+		// 			console.log(command);
+		// 		}
+
+		// 		if (message.client.commands.length === message.client.commands.indexOf(c) + 1) {
+		// 			await message.react('✅');
+		// 		}
+		// 	});
+		// }
+		// else {
+		// 	// const command = await message.client.application?.set(data);
+		// }
 		// await message.channel.guild.commands?.set(data);
 	},
 };
