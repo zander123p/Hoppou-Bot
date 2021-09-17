@@ -43,7 +43,7 @@ module.exports = {
                         size: 1024,
                     }));
 
-                embed.addField('Level', newLevel);
+                embed.addField('Level', newLevel.toString());
 
                 channel.send(`${member.user}, you leveled up!`);
                 channel.send({ embeds: [embed] });
