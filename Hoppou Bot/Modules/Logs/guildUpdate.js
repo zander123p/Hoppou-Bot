@@ -4,10 +4,10 @@ module.exports = {
     async event(client, oldGuild) {
         const { MessageEmbed } = require('discord.js');
 
-        const logs = await oldGuild.guild.getModuleSetting(this.module, 'logs');
+        const logs = await oldGuild.getModuleSetting(this.module, 'logs');
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
         if (!log) return;
-        const c = oldGuild.guild.channels.cache.get(log.id);
+        const c = oldGuild.channels.cache.get(log.id);
 
         const fetchedLogs = await oldGuild.fetchAuditLogs({
             limit: 1,
