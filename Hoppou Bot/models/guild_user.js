@@ -6,7 +6,7 @@ const user_profileSchema = mongoose.Schema({
     userID: String,
     permissionGroups: [String],
     messages: Number,
-    VCTracker: [{id: String, mins: Number}],
+    VCTracker: [{ id: String, mins: Number }],
     exp: Number,
 });
 

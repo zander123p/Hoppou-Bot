@@ -1,9 +1,12 @@
 module.exports = {
-    name: "User Verification",
+    name: 'User Verification',
     events: [
-        "NewcomerSystemJoinHandler",
-        "NewcomerSystemLeaveHandler",
-        "NewcomerSystemManualHandler",
-        "Startup"
-    ]
-}
+        'NewcomerSystemJoinHandler',
+        'NewcomerSystemLeaveHandler',
+        'NewcomerSystemManualHandler',
+        'Startup',
+    ],
+    buttons: [
+        'NewcomerButtonHandler',
+    ],
+};

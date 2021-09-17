@@ -1,111 +1,18 @@
-const fs = require('fs');
 const Discord = require('discord.js');
 // Needed for .env file
 require('dotenv').config();
 
 // Basic discord setup
-const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'], intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS'] });
+const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'], intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MEMBERS'] });
+
 client.commands = new Discord.Collection();
 client.commands.categories = [];
-
 client.cooldowns = new Discord.Collection();
-
 client.VCTracker = new Discord.Collection();
-
 client.modules = [];
-
-
-// Gather all commands from all modules and set the category to the module folder's name
-for (const folder of getDirectories('./commands/modules')) {
-	const files = fs.readdirSync(`./commands/modules/${folder}`).filter(file => file.endsWith('.js'));
-	for (const file of files) {
-		const command = require(`./commands/modules/${folder}/${file}`);
-		command.category = folder;
-		client.commands.set(command.name, command);
-		if (!client.commands.categories.includes(folder)) {client.commands.categories.push(folder);}
-	}
-}
-
-// I don't need to say what this does
-client.commands.categories = getDirectories('./commands/modules');
-
-client.events = new Discord.Collection();
-
-// Load the events from the events folder
-fs.readdir('./events/logs/', (err, files) => {
-	if (err) return console.error;
-	let index = 0;
-	// files.sort((a,b) => {
-	//     return fs.statSync('./events/' + a).birthtime - fs.statSync('./events/' + b).birthtime;
-	// });
-	files.forEach(file => {
-		if (!file.endsWith('.js')) return;
-		const evt = require(`./events/logs/${file}`);
-		const evtName = file.split('.')[0];
-		console.log(`Loaded Event: '${evtName}'`);
-		client.on(evtName, evt.bind(null, client));
-		evt.id = evtName;
-		client.events.set(index, evtName);
-		index++;
-	});
-});
-
-// Load the events from the events folder
-fs.readdir('./events/core/', (err, files) => {
-	if (err) return console.error;
-	files.forEach(file => {
-		if (!file.endsWith('.js')) return;
-		const evt = require(`./events/core/${file}`);
-		const evtName = file.split('.')[0];
-		console.log(`Loaded Event: '${evtName}'`);
-		client.on(evt.eventType, evt.event.bind(null, client));
-	});
-});
-
-// Load the events from the events folder
-fs.readdir('./events/perms/', (err, files) => {
-	if (err) return console.error;
-	files.forEach(file => {
-		if (!file.endsWith('.js')) return;
-		const evt = require(`./events/perms/${file}`);
-		const evtName = file.split('.')[0];
-		console.log(`Loaded Event: '${evt.name}'`);
-		client.on(evtName, evt.event.bind(null, client));
-	});
-});
-
-// Load the modules from the modules folder
-const modules = getDirectories('./Modules');
-modules.forEach(m => {
-	fs.readdir(`./Modules/${m}`, (err, files) => {
-		if (err) return console.error;
-		files.forEach(file => {
-			if (!file.endsWith('.js')) return;
-			const evt = require(`./Modules/${m}/${file}`);
-			if (!evt.eventType) return;
-			const moduleName = file.split('.')[0];
-			console.log(`Loaded Module: '${moduleName}'`);
-			client.on(evt.eventType, evt.event.bind(null, client));
-		});
-	});
-});
-
-// // Load the modules from the modules folder
-// let modules = getDirectories('./Modules');
-// client.modules = modules;
-// modules.forEach(m => {
-//     fs.readdir(`./Modules/${m}`, (err, files) => {
-//         if (err) return console.error;
-//         files.forEach(file => {
-//             if (!file.endsWith('.js')) return;
-//             const evt = require(`./Modules/${m}/${file}`);
-//             if (!evt.eventType) return;
-//             let moduleName = file.split('.')[0];
-//             console.log(`Loaded Module: '${moduleName}'`);
-//             client.on(evt.eventType, evt.event.bind(null, client));
-//         });
-//     });    
-// });
+client.buttons = [];
+client.permissions = [];
+client.logs = [];
 
 const ModuleLoader = require('./Modules/ModuleLoader');
 ModuleLoader.LoadModules(client);
@@ -139,13 +46,6 @@ client.ActionLogs = require('./models/action_log');
 client.MuteLogs = require('./models/mute_log');
 client.GuildNewJoins = require('./models/guild_new_joins');
 
-// Gets all directories in a path
-function getDirectories(path) {
-	return fs.readdirSync(path).filter(function(file) {
-		return fs.statSync(path + '/' + file).isDirectory();
-	});
-}
-
 // Gets the user from their ID
 Discord.Message.prototype.getUserFromID = async function(mention) {
 	const matches = await mention.match(/(\d+)/);
@@ -159,6 +59,51 @@ Discord.Message.prototype.getUserFromID = async function(mention) {
 	const user = this.client.users.cache.get(id);
 	if (user) {
 		return user;
+	}
+};
+
+Discord.Guild.prototype.hasModule = async function(mod) {
+	const g = await this.ensure();
+	return g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase());
+};
+
+Discord.Guild.prototype.getModuleSetting = async function(mod, setting) {
+	const g = await this.ensure();
+	const S = g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase());
+	if (!S) return;
+	const s = S.settings.find(se => se.name === setting);
+	if (s) return s.value;
+};
+
+Discord.Guild.prototype.setModuleSetting = async function(mod, setting, value) {
+	const g = await this.ensure();
+	const S = g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase());
+
+	let s;
+	if (S) {
+		s = S.settings.find(se => se.name === setting);
+	} else {
+		g.modules.push({ module: mod, settings: { name: setting, value } });
+		return await g.save();
+	}
+
+	if (s) {
+		g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase()).settings.find(se => se.name === setting).value = value;
+		await g.save();
+	} else {
+		g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase()).settings.push({ name: setting, value });
+		await g.save();
+	}
+};
+
+Discord.Guild.prototype.clearModuleSetting = async function(mod, setting) {
+	const g = await this.ensure();
+	const S = g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase());
+	if (!S) return;
+	const s = S.settings.find(se => se.name === setting);
+	if (s) {
+		g.modules.find(m => m.module.toLowerCase() === mod.toLowerCase()).settings.splice(S.settings.indexOf(s), 1);
+		await g.save();
 	}
 };
 
@@ -277,43 +222,25 @@ Discord.GuildMember.prototype.getGuildPermissionGroups = async function() {
     });
     groups = groups.filter(element => element !== undefined);
     return groups;
-}
+};
 
-Discord.GuildMember.prototype.hasGuildPermission = async function(permission, role = true) {
-	if (!permission || await this.guild.fetchOwner() === this) {return true;}
-
-	if (role) {
-		permission = permission.toLowerCase();
-		const guild = await this.guild.ensure();
-
-		let hasPerms = false;
-
-		const roles = this.roles.cache;
-		roles.forEach(r => {
-			const group = guild.permissionGroups.find(g => g.role === r.id);
-			if(group) {
-				if (group.permissions.includes('*')) hasPerms = true;
-				if (group.blacklist.includes(permission)) return;
-				if (group.permissions.includes(permission.split('.')[0] + '.*')) hasPerms = true;
-				if (group.permissions.includes(permission)) hasPerms = true;
-			}
-		});
-
-		return hasPerms;
-	}
-
-	const user = await this.ensure();
-	const guild = await this.guild.ensure();
+Discord.GuildMember.prototype.hasGuildPermission = async function(permission) {
 	permission = permission.toLowerCase();
 
+	if (!permission || await this.guild.fetchOwner() === this) {return true;}
+
+	const guild = await this.guild.ensure();
+
 	let hasPerms = false;
-	guild.permissionGroups.forEach(group => {
-		if (user.permissionGroups.includes(group.name)) {
+
+	const roles = this.roles.cache;
+	roles.forEach(r => {
+		const group = guild.permissionGroups.find(g => g.role === r.id);
+		if(group) {
 			if (group.permissions.includes('*')) hasPerms = true;
-			if (group.permissions.includes(permission) || (group.permissions.includes(permission.split('.')[0] + '.*'))) {
-				hasPerms = true;
-			}
-			if (group.blacklist.includes(permission)) hasPerms = false;
+			if (group.blacklist.includes(permission)) return;
+			if (group.permissions.includes(permission.split('.')[0] + '.*')) hasPerms = true;
+			if (group.permissions.includes(permission)) hasPerms = true;
 		}
 	});
 
@@ -322,12 +249,12 @@ Discord.GuildMember.prototype.hasGuildPermission = async function(permission, ro
 
 Discord.GuildMember.prototype.getLevel = async function() {
 	const gUser = await this.ensure();
-	const g = await this.guild.ensure();
-	const c = (g.settings.levelMul) ? g.settings.levelMul : 0.435;
+	const c = 0.435;
 	const level = Math.floor(c * Math.sqrt((gUser.exp) ? gUser.exp : 0));
 	return level;
 };
 
 // Init database shit and login
 client.mongoose.init();
+client.API = require('./utils/api');
 client.login(process.env.TOKEN);

@@ -1,6 +1,13 @@
 module.exports = {
-    name: "Level Ranks",
+    name: 'Level Ranks',
     events: [
-        "Rankup"
-    ]
-}
+        'Rankup',
+        'Levelup',
+    ],
+    PreEventInit(client, event) {
+
+    },
+    PostEventInit(client, event) {
+
+    },
+};

@@ -7,6 +7,12 @@ module.exports = class ListedMenu {
         this.page = 1;
         this.buttons = [];
         this.callback = callback;
+        this.title = '';
+        return this;
+    }
+
+    setTitle(title) {
+        this.title = title;
         return this;
     }
 
@@ -21,6 +27,7 @@ module.exports = class ListedMenu {
     }
 
     setMaxValues(maxValues) {
+        if (maxValues > 25) maxValues = 25;
         this.menu.setMaxValues(maxValues);
         return this;
     }
@@ -85,7 +92,7 @@ module.exports = class ListedMenu {
             // TODO:
             // Row 3 from buttons list
 
-            interaction.reply({ content: `Page 1/${Math.ceil(this.optionCount / 25)}`, components: [row1, row2] });
+            interaction.reply({ content: `${(this.title !== '') ? this.title + ' - ' : ''}Page 1/${Math.ceil(this.optionCount / 25)}`, components: [row1, row2] });
             interaction.fetchReply().then(async msg => {
                 const filter = (i) => {
                     return !i.user.bot;
@@ -104,7 +111,7 @@ module.exports = class ListedMenu {
                 .addComponents(
                     this.menu,
                 );
-            interaction.reply({ content: '⠀', components: [row1] });
+            interaction.reply({ content: (this.title !== '') ? this.title : '⠀', components: [row1] });
             interaction.fetchReply().then(async msg => {
                 const filter = (i) => {
                     return !i.user.bot;
@@ -149,7 +156,11 @@ module.exports = class ListedMenu {
                     .setStyle('PRIMARY'),
             );
 
-        msg.edit({ content: `Page ${this.page}/${Math.ceil(this.optionCount / 25)}`, components: [row1, row2] });
+        if (LM.options.length < 25) {
+            msg.edit({ content: (this.title !== '') ? this.title : '⠀', components: [row1] });
+        } else {
+            msg.edit({ content: `${(this.title !== '') ? this.title + ' - ' : ''}Page ${this.page}/${Math.ceil(this.optionCount / 25)}`, components: [row1, row2] });
+        }
     }
 
     async action(LM, i) {

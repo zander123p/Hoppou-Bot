@@ -2,14 +2,23 @@
     "guild": {
         "settings": {
             "prefix": "p!",
-            "channels": [
+            "modules": [
                 {
-                    "name": "log-channel",
-                    "logs": [0,1,2]
-                },
-                {
-                    "name": "log-channel-2",
-                    "logs": [3,4,5]
+                    "module": "Logs",
+                    "settings": [
+                        {
+                            "logs": [
+                                {
+                                    "id": "123",
+                                    "logs": ["a","b","c"]
+                                },
+                                {
+                                    "id": "123",
+                                    "logs": ["d","e","f"]
+                                }
+                            ]                
+                        }
+                    ]
                 }
             ]
        }
