@@ -8,7 +8,8 @@ module.exports = {
 			if (command.permission)
 				if (!(await member.hasGuildPermission(command.permission))) return interaction.reply({ content: 'You don\'t have permission to run that command!', ephemeral: true });
 
-			if (!await member.guild.hasModule(command.module)) return interaction.reply({ content: `The module '${command.module}' is not active!`, ephemeral: true });
+			if (interaction.client.modules.includes(command.module))
+				if (!await member.guild.hasModule(command.module)) return interaction.reply({ content: `The module '${command.module}' is not active!`, ephemeral: true });
 
 			await command.execute(interaction);
 		}
