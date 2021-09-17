@@ -82,7 +82,9 @@ module.exports = {
                 });
                 return;
             }
-            const emojiID = emoji.match(/<a?:.+:(\d+)>/)[1];
+            const emojiMatch = emoji.match(/<a?:.+:(\d+)>/);
+            if (!emojiMatch) return interaction.reply({ content: 'The emoji used seems to not work for this, try another one.', ephemeral: true });
+            const emojiID = emojiMatch[1];
             const _emoji = guild.emojis.cache.get(emojiID);
 
             if (!_emoji) {
