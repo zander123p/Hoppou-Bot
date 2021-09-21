@@ -12,7 +12,6 @@ module.exports = {
             if (!user.exp) user.exp = 0;
 
             if (client.cooldowns.get(message.author.id)) {
-                console.log('User is on cooldown');
                 return;
             } else {
                 client.cooldowns.set(message.author.id, true);

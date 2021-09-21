@@ -3,6 +3,7 @@ module.exports = {
     async event(client, member, guild) {
         const level = await member.getLevel();
         const ranks = await guild.getModuleSetting(this.module, 'ranks');
+        if (!ranks) return;
         ranks.forEach(r => {
             const role = guild.roles.cache.get(r.id);
             if (level >= r.level && !member.roles.cache.get(r.id)) {
