@@ -1,18 +1,21 @@
-const { createCanvas, loadImage, createImageData } = require('canvas');
+const { createCanvas, loadImage } = require('canvas');
 const imagemin = require('imagemin');
 const imageminWebp = require('imagemin-webp');
 
-var canvas = createCanvas(1024, 512);
-var ctx = canvas.getContext('2d');
+const canvas = createCanvas(1024, 512);
+const ctx = canvas.getContext('2d');
 
-function scalePreserveAspectRatio(imgW,imgH,maxW,maxH){
-  return(Math.min((maxW/imgW),(maxH/imgH)));
+function scalePreserveAspectRatio(imgW, imgH, maxW, maxH) {
+  return (Math.min((maxW / imgW), (maxH / imgH)));
 }
 
 async function addImage(src, imgOffsetX, imgOffsetY, width, height, offsetX = 0, offsetY = 0) {
   const image = await loadImage(src);
-  let s = scalePreserveAspectRatio(image.width, image.height, width, height);
-  return new Promise((resolve) => { ctx.drawImage(image, imgOffsetX, imgOffsetY, image.width, image.height, offsetX, offsetY, image.width * s, image.height * s); resolve() });
+  const s = scalePreserveAspectRatio(image.width, image.height, width, height);
+  return new Promise((resolve) => {
+      ctx.drawImage(image, imgOffsetX, imgOffsetY, image.width, image.height, offsetX, offsetY, image.width * s, image.height * s);
+      resolve();
+    });
 }
 
 module.exports = async function drawProfile(userProfile) {
@@ -51,8 +54,8 @@ module.exports = async function drawProfile(userProfile) {
     ctx.font = '55px serif';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText(`${userProfile.name}`, (1024/2)/2, 55 + ((userProfile.title)? 0 : 15));
-    ctx.fillText(`Guild Level: ${userProfile.level}`, (1024/2)*1.5, 55+15);
+    ctx.fillText(`${(userProfile.name.length > 12) ? userProfile.name.substring(0, 11) + '...' : userProfile.name}`, (1024 / 2) / 2, 55 + ((userProfile.title) ? 0 : 15));
+    ctx.fillText(`Guild Level: ${userProfile.level}`, (1024 / 2) * 1.5, 55 + 15);
 
     ctx.shadowColor = 'black';
     ctx.shadowBlur = 15;
@@ -60,8 +63,8 @@ module.exports = async function drawProfile(userProfile) {
     ctx.lineWidth = 8;
     ctx.font = '72px serif';
     ctx.textAlign = 'start';
-    ctx.strokeText(`Guild Rank: #${userProfile.rank}`, (1024/2)/2, 512-24);
-    ctx.fillText(`Guild Rank: #${userProfile.rank}`, (1024/2)/2, 512-24);
+    ctx.strokeText(`Guild Rank: #${userProfile.rank}`, (1024 / 2) / 2, 512 - 24);
+    ctx.fillText(`Guild Rank: #${userProfile.rank}`, (1024 / 2) / 2, 512 - 24);
     ctx.font = '55px serif';
     ctx.textAlign = 'center';
     ctx.lineWidth = 0;
@@ -71,27 +74,27 @@ module.exports = async function drawProfile(userProfile) {
 
     ctx.font = '22px serif';
     if (userProfile.title)
-      ctx.fillText(`<${userProfile.title}>`, (1024/2)/2, 60+25);
+      ctx.fillText(`<${userProfile.title}>`, (1024 / 2) / 2, 60 + 25);
     ctx.textAlign = 'start';
-
-    // Flare
-    await addFlare(userProfile.flare, userProfile.userID);
 
     // Profile Image
     ctx.save();
     ctx.beginPath();
-    ctx.arc(128, 512-128, 128, -Math.PI, Math.PI);
+    ctx.arc(128, 512 - 128, 128, -Math.PI, Math.PI);
     ctx.lineTo(250, 250);
     ctx.clip();
-    await addImage(userProfile.imgURL, 0, 0, 256, 256, 0, 512-256);
+    await addImage(userProfile.imgURL, 0, 0, 256, 256, 0, 512 - 256);
     ctx.restore();
+
+    // Flare
+    await addFlare(userProfile.flare, userProfile.userID);
 
     let buffer = canvas.toBuffer();
 
     buffer = await imagemin.buffer(buffer, {
       plugins: [
-        imageminWebp({quality: 50, alphaQuality: 50}),
-      ]
+        imageminWebp({ quality: 50, alphaQuality: 50 }),
+      ],
     });
 
     return buffer;
@@ -107,7 +110,7 @@ async function addBackground(bg) {
 async function addFlare(flare, userID) {
   const _flare = flares.find(f => f.id === flare);
   if (!_flare) return;
-  _flare.draw();
+  _flare.draw(userID.substring(0, 6));
 }
 
 /**
@@ -119,7 +122,7 @@ async function addFlare(flare, userID) {
  * @param {Number} y The top left y coordinate
  * @param {Number} width The width of the rectangle
  * @param {Number} height The height of the rectangle
- * @param {Number} [radius = 5] The corner radius; It can also be an object 
+ * @param {Number} [radius = 5] The corner radius; It can also be an object
  *                 to specify different radii for corners
  * @param {Number} [radius.tl = 0] Top left
  * @param {Number} [radius.tr = 0] Top right
@@ -129,7 +132,7 @@ async function addFlare(flare, userID) {
  * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
  * @param {Boolean} [clip = false] Whether to use the rectangle as a clip.
  */
-function roundRect(ctx, x, y, width, height, radius, fill, stroke, clip) {
+function roundRect(ctx1, x, y, width, height, radius, fill, stroke, clip) {
   if (typeof stroke === 'undefined') {
     stroke = true;
   }
@@ -137,10 +140,10 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke, clip) {
     radius = 5;
   }
   if (typeof radius === 'number') {
-    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+    radius = { tl: radius, tr: radius, br: radius, bl: radius };
   } else {
-    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-    for (var side in defaultRadius) {
+    const defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
+    for (const side in defaultRadius) {
       radius[side] = radius[side] || defaultRadius[side];
     }
   }
@@ -148,32 +151,32 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke, clip) {
     clip = false;
   }
 
-  ctx.beginPath();
-  ctx.moveTo(x + radius.tl, y);
-  ctx.lineTo(x + width - radius.tr, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-  ctx.lineTo(x + width, y + height - radius.br);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-  ctx.lineTo(x + radius.bl, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-  ctx.lineTo(x, y + radius.tl);
-  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-  ctx.closePath();
+  ctx1.beginPath();
+  ctx1.moveTo(x + radius.tl, y);
+  ctx1.lineTo(x + width - radius.tr, y);
+  ctx1.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+  ctx1.lineTo(x + width, y + height - radius.br);
+  ctx1.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+  ctx1.lineTo(x + radius.bl, y + height);
+  ctx1.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+  ctx1.lineTo(x, y + radius.tl);
+  ctx1.quadraticCurveTo(x, y, x + radius.tl, y);
+  ctx1.closePath();
   if (fill) {
-    ctx.fill();
+    ctx1.fill();
   }
   if (stroke) {
-    ctx.stroke();
+    ctx1.stroke();
   }
   if (clip) {
-    ctx.clip();
+    ctx1.clip();
   }
 
 }
 
 const SimplexNoise = require('simplex-noise');
 
-backgrounds = [
+const backgrounds = [
     { id: 0, path: './utils/img/bg1.jpg', offset: { x: 50, y: 120 } },
     { id: 1, path: './utils/img/bg2.jpg', offset: { x: 0, y: 0 } },
     { id: 2, path: './utils/img/bg3.jpg', offset: { x: 0, y: 0 } },
@@ -181,29 +184,30 @@ backgrounds = [
     { id: 4, path: './utils/img/bg5.jpg', offset: { x: 0, y: 115 } },
 ];
 
-flares = [
+const flares = [
     { id: 1, async draw(seed) {
-        let simplex = new SimplexNoise(seed);
+        const simplex = new SimplexNoise(seed);
         ctx.save();
 
         // ctx.beginPath();
-        // ctx.moveTo(1024, 512/2-50);
-        // ctx.quadraticCurveTo(1024/2, 512/2-50, (1024/2)/3, 512);
+        // ctx.moveTo(1024, 512 / 2 - 50);
+        // ctx.quadraticCurveTo(1024 / 2, 512 / 2 - 50, (1024 / 2) / 3, 512);
         // ctx.lineTo(0, 512);
         // ctx.lineTo(0, 0);
         // ctx.lineTo(1024, 0);
         // ctx.clip();
 
         for (let x = 0; x < 10; x++) {
-          for (let y = 0; y < 10; y++) {
-            let noise = simplex.noise2D(x + .5, y + .5);
-            
-            await addImage(__dirname + '\\img\\flares\\heart.png', 0, 0, 64, 64, x * 100, y * 100);
-            if (noise > .5) {
+          for (let y = 0; y < 5; y++) {
+            const noise = simplex.noise2D(x + 0.5, y + 0.5);
+
+            if (noise > 0.1) {
+              await addImage(__dirname + '\\img\\flares\\heart.png', 0, 0, 64, 64, x * 100, y * 100);
             }
           }
         }
 
         ctx.restore();
-    }},
-]
+    },
+  },
+];

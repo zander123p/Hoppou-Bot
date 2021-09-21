@@ -110,3 +110,4 @@ dist
 template.config.js
 Hoppou Bot/commands/modules/Debug/eval.js
 Hoppou Bot/commands/modules/Debug/usertest.js
+.jshintrc

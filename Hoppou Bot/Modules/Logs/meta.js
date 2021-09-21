@@ -1,0 +1,35 @@
+module.exports = {
+    name: 'Logs',
+    events: [
+        'channelCreate',
+        'channelDelete',
+        'channelPinsUpdate',
+        'channelUpdate',
+        'emojiCreate',
+        'emojiDelete',
+        'emojiUpdate',
+        'guildBanAdd',
+        'guildBanRemove',
+        'guildMemberAdd',
+        'guildMemberKick',
+        'guildMemberMute',
+        'guildMemberRemove',
+        'guildMemberRoleUpdate',
+        'guildMemberUpdate',
+        'guildMemberWarn',
+        'guildUpdate',
+        'inviteCreate',
+        'inviteDelete',
+        'messageDelete',
+        'messageDeleteBulk',
+        'messageReactionRemoveAll',
+        'messageUpdate',
+        'roleCreate',
+        'roleDelete',
+        'roleUpdate',
+    ],
+    PreEventInit(client, event) {
+        console.log(`[ModuleLoader] Registering Log: '${event.name}'...`);
+        client.logs.push(event.name.toLowerCase());
+    },
+};
