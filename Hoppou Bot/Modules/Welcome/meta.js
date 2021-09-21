@@ -3,10 +3,4 @@ module.exports = {
     events: [
         'WelcomeUser',
     ],
-    PreEventInit(client, event) {
-
-    },
-    PostEventInit(client, event) {
-
-    },
 };

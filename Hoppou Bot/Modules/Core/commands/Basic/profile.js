@@ -26,17 +26,8 @@ module.exports = {
             imgURL: user.displayAvatarURL({ format: 'png', size: 1024 }),
         };
 
-        // interaction.defer();
+        interaction.defer();
         const profileBuffer = await getProfile(userProfile);
         interaction.reply({ files: [{ attachment: profileBuffer, name: 'profile.png' }] });
-        // message.channel.send('`Generating Profile...`').then(async (msg) => {
-        //     const profileBuffer = await getProfile(userProfile);
-        //     message.channel.send({
-        //         files: [{
-        //             attachment: profileBuffer,
-        //             name: 'profile.png',
-        //         }],
-        //     }).then(() => msg.delete());
-        // });
     },
 };

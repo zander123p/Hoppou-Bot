@@ -12,6 +12,7 @@
     "got": "^9.6.0",
     "imagemin": "^7.0.1",
     "imagemin-webp": "^6.0.0",
+    "jshint": "^2.13.1",
     "moment": "^2.29.1",
     "mongoose": "^5.12.15",
     "nodemon": "^2.0.7",

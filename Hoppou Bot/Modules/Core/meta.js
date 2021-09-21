@@ -3,6 +3,7 @@ module.exports = {
     coreModule: true,
     events: [
         'BotReady',
+        'BotUpdate',
         'GuildJoin',
         'GuildLeave',
         'Interaction',

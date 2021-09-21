@@ -70,7 +70,7 @@ module.exports = {
                 await g.save();
 
                 guild.channels.cache.forEach(async c => {
-                    if (!c.type === 'text') return;
+                    if (c.type !== 'text') return;
                     try {
                         await c.messages.fetch(messageID).then(m => {
                             m.react(emoji);
@@ -106,7 +106,7 @@ module.exports = {
             await g.save();
 
             guild.channels.cache.forEach(async c => {
-                if (!c.type === 'text') return;
+                if (c.type !== 'text') return;
                 try {
                     await c.messages.fetch(messageID).then(m => {
                         m.react(emoji);
@@ -134,7 +134,7 @@ module.exports = {
             await g.save();
 
             guild.channels.cache.forEach(async c => {
-                if (!c.type === 'text') return;
+                if (c.type !== 'text') return;
                 try {
                     await c.messages.fetch(messageID).then(async m => {
                         m.reactions.cache.forEach(async r => {

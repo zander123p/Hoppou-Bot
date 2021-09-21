@@ -20,10 +20,10 @@ module.exports = {
         channel.bulkDelete(number)
             .then((messages) => {
                 interaction.client.emit('messageDeleteBulk', messages, interaction.user);
-                interaction.deferUpdate();
-            }).catch(() => {
-                const content = `could not purge ${number} messages.`;
-                return interaction.reply({ content, ephemeral: true });
+                interaction.reply({ content: `Purged ${number} messages.`, ephemeral: true });
+            }).catch((err) => {
+                console.error(err);
+                return interaction.reply({ content: `Could not purge ${number} messages.`, ephemeral: true });
             });
     },
 };

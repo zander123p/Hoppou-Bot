@@ -8,9 +8,9 @@ module.exports = {
             .setColor('#9a3deb')
             .setTitle('Hoppou Bot');
 
-        const data = await interaction.client.API.PostEndpoint('version');
+        const version = await interaction.client.getVersion();
         embed.addField('Links', '[Source Code](https://github.com/zander123p/Hoppou-Bot)\n[Report Bug](https://github.com/zander123p/Hoppou-Bot/issues/new?assignees=&labels=&template=bug_report.md&title=%5BBUG%5D)\n[Request Feature](https://github.com/zander123p/Hoppou-Bot/issues/new?assignees=zander123p&labels=enhancement&template=feature_request.md&title=%5BFEATURE+REQUEST%5D)');
-        embed.setFooter(`By zander123p - Version ${data.version}`);
+        embed.setFooter(`By zander123p - Version ${version}`);
         interaction.reply({ embeds: [embed] });
     },
 };

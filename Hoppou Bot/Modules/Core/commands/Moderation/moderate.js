@@ -18,7 +18,7 @@ module.exports = {
                     name: 'reason',
                     description: 'The reason for the ban',
                     type: 'STRING',
-                    required: false,
+                    required: true,
                 },
             ],
         },
@@ -297,7 +297,7 @@ async function UnmuteUser(interaction, thisCtx) {
 }
 
 async function UserInfo(interaction) {
-    const ListedEmbed = require('../../../utils/listedembed');
+    const ListedEmbed = require('../../../../utils/listedembed');
     const gUser = interaction.member.guild.members.cache.get(interaction.options.get('user').value);
     const user = gUser.user;
     const type = interaction.options.getString('type');
@@ -439,15 +439,15 @@ async function UserInfo(interaction) {
 }
 
 async function WarnUser(interaction) {
-    const user = interaction.member.guild.members.cache.get(interaction.options.getUser('user').id);
+    const member = interaction.member.guild.members.cache.get(interaction.options.getUser('user').id);
     const reason = interaction.options.getString('reason');
-    const userProfile = await user.user.ensure();
+    const userProfile = await member.user.ensure();
     const mg = require('mongoose');
     const newActionId = mg.Types.ObjectId();
     const log = new interaction.client.ActionLogs({
         _id: newActionId,
-        userID: user.user.id,
-        guildID: user.user.guild.id,
+        userID: member.user.id,
+        guildID: member.guild.id,
         type: 'warning',
         moderator: interaction.member.user.id,
         reason: reason,
@@ -456,10 +456,10 @@ async function WarnUser(interaction) {
     userProfile.warnings.push(newActionId);
     userProfile.totalActions += 1;
     await userProfile.save();
-    if (!user.user.bot)
-        user.user.send(`You have been warned by ${interaction.member.user} for ${reason}!`);
+    if (!member.user.bot)
+        member.user.send(`You have been warned by ${interaction.member.user} for ${reason}!`);
 
-    interaction.client.emit('guildMemberWarn', user, interaction.member.user, reason);
+    interaction.client.emit('guildMemberWarn', member, interaction.member.user, reason);
     interaction.reply({ content: 'Member has been warned!', ephemeral: true });
 }
 
@@ -468,7 +468,7 @@ async function SetRole(interaction, thisCtx) {
     const type = interaction.options.getString('type');
     const guild = interaction.member.guild;
 
-    await guild.getModuleSetting(thisCtx.module, type, role.id);
+    await guild.setModuleSetting(thisCtx.module, type, role.id);
 
     interaction.reply({ content: 'Successfully set role', ephemeral: true });
 }

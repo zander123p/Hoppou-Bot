@@ -77,9 +77,6 @@ module.exports = async function drawProfile(userProfile) {
       ctx.fillText(`<${userProfile.title}>`, (1024 / 2) / 2, 60 + 25);
     ctx.textAlign = 'start';
 
-    // // Flare
-    // await addFlare(userProfile.flare, userProfile.userID);
-
     // Profile Image
     ctx.save();
     ctx.beginPath();
@@ -88,6 +85,9 @@ module.exports = async function drawProfile(userProfile) {
     ctx.clip();
     await addImage(userProfile.imgURL, 0, 0, 256, 256, 0, 512 - 256);
     ctx.restore();
+
+    // Flare
+    await addFlare(userProfile.flare, userProfile.userID);
 
     let buffer = canvas.toBuffer();
 
@@ -107,11 +107,11 @@ async function addBackground(bg) {
     ctx.filter = 'none';
 }
 
-// async function addFlare(flare, userID) {
-//   const _flare = flares.find(f => f.id === flare);
-//   if (!_flare) return;
-//   _flare.draw();
-// }
+async function addFlare(flare, userID) {
+  const _flare = flares.find(f => f.id === flare);
+  if (!_flare) return;
+  _flare.draw(userID.substring(0, 6));
+}
 
 /**
  * Draws a rounded rectangle using the current state of the canvas.
@@ -174,7 +174,7 @@ function roundRect(ctx1, x, y, width, height, radius, fill, stroke, clip) {
 
 }
 
-// const SimplexNoise = require('simplex-noise');
+const SimplexNoise = require('simplex-noise');
 
 const backgrounds = [
     { id: 0, path: './utils/img/bg1.jpg', offset: { x: 50, y: 120 } },
@@ -184,29 +184,30 @@ const backgrounds = [
     { id: 4, path: './utils/img/bg5.jpg', offset: { x: 0, y: 115 } },
 ];
 
-// // flares = [
-// //     { id: 1, async draw(seed) {
-// //         let simplex = new SimplexNoise(seed);
-// //         ctx.save();
+const flares = [
+    { id: 1, async draw(seed) {
+        const simplex = new SimplexNoise(seed);
+        ctx.save();
 
-// //         // ctx.beginPath();
-// //         // ctx.moveTo(1024, 512/2-50);
-// //         // ctx.quadraticCurveTo(1024/2, 512/2-50, (1024/2)/3, 512);
-// //         // ctx.lineTo(0, 512);
-// //         // ctx.lineTo(0, 0);
-// //         // ctx.lineTo(1024, 0);
-// //         // ctx.clip();
+        // ctx.beginPath();
+        // ctx.moveTo(1024, 512 / 2 - 50);
+        // ctx.quadraticCurveTo(1024 / 2, 512 / 2 - 50, (1024 / 2) / 3, 512);
+        // ctx.lineTo(0, 512);
+        // ctx.lineTo(0, 0);
+        // ctx.lineTo(1024, 0);
+        // ctx.clip();
 
-// //         for (let x = 0; x < 10; x++) {
-// //           for (let y = 0; y < 10; y++) {
-// //             let noise = simplex.noise2D(x + .5, y + .5);
+        for (let x = 0; x < 10; x++) {
+          for (let y = 0; y < 5; y++) {
+            const noise = simplex.noise2D(x + 0.5, y + 0.5);
 
-// //             await addImage(__dirname + '\\img\\flares\\heart.png', 0, 0, 64, 64, x * 100, y * 100);
-// //             if (noise > .5) {
-// //             }
-// //           }
-// //         }
+            if (noise > 0.1) {
+              await addImage(__dirname + '\\img\\flares\\heart.png', 0, 0, 64, 64, x * 100, y * 100);
+            }
+          }
+        }
 
-// //         ctx.restore();
-// //     }},
-// // ]
+        ctx.restore();
+    },
+  },
+];

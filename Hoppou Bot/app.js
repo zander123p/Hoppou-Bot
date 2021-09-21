@@ -45,6 +45,7 @@ client.GuildUsers = require('./models/guild_user');
 client.ActionLogs = require('./models/action_log');
 client.MuteLogs = require('./models/mute_log');
 client.GuildNewJoins = require('./models/guild_new_joins');
+client.Info = require('./models/info');
 
 // Gets the user from their ID
 Discord.Message.prototype.getUserFromID = async function(mention) {
@@ -59,6 +60,42 @@ Discord.Message.prototype.getUserFromID = async function(mention) {
 	const user = this.client.users.cache.get(id);
 	if (user) {
 		return user;
+	}
+};
+
+client.getVersion = async function(global) {
+	if (global) {
+		const gV = await client.API.PostEndpoint('version');
+		return gV.version;
+	} else {
+		const info = await client.getInfo();
+		if (!info.version) {
+			const version = await client.API.PostEndpoint('version');
+
+			info.version = version.version;
+			await info.save();
+			return version.version;
+		} else {
+			return info.version;
+		}
+	}
+};
+
+client.getInfo = async function() {
+	const mg = require('mongoose');
+	const info = await client.Info.findOne({ botID: client.user.id });
+	if (!info) {
+		const Info = new client.Info({
+			_id: mg.Types.ObjectId(),
+			botID: client.user.id,
+			verison: '0.0.0',
+		});
+
+		await Info.save().catch(err => console.error(err));
+		return Info;
+	}
+	else {
+		return info;
 	}
 };
 
@@ -116,12 +153,6 @@ Discord.Guild.prototype.ensure = async function() {
 			_id: mg.Types.ObjectId(),
 			guildID: this.id,
 			guildName: this.name,
-			settings: {
-				prefix: process.env.PREFIX,
-				channels: [],
-				VCTracker: [],
-				levelMul: 0.435,
-			},
 		});
 
 		await guild.save().catch(err => console.error(err));
