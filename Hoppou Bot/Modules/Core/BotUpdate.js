@@ -2,7 +2,7 @@ module.exports = {
     eventType: 'botUpdate',
     async event(client) {
         console.log(`[Bot Update] Version: ${await client.getVersion()}`);
-        const DeployCommand = client.commands.find(cmd => cmd.name === 'deploy');
+        const DeployCommand = client.commands.get('deploy');
 		await client.application.commands.create({ name: DeployCommand.name, description: DeployCommand.description, options: DeployCommand.options });
         client.guilds.cache.forEach(async guild => {
             const g = await guild.ensure();

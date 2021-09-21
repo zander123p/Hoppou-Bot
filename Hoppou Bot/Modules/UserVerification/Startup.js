@@ -27,6 +27,7 @@ module.exports = {
                 } catch (err) {
                     console.log(err);
                     console.log(`Invalid message in database\nMessageID: ${messageID}\nUserID: ${userID}\nGuildID: ${guildID}`);
+                    await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
                 }
             });
         }
