@@ -24,10 +24,10 @@ module.exports = {
                         message.delete();
                         await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
                     }
-                } catch (err) {
-                    console.log(err);
-                    console.log(`Invalid message in database\nMessageID: ${messageID}\nUserID: ${userID}\nGuildID: ${guildID}`);
-                    await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
+                } catch {
+                    // console.log(err);
+                    // console.log(`Invalid message in database\nMessageID: ${messageID}\nUserID: ${userID}\nGuildID: ${guildID}`);
+                    // await client.GuildNewJoins.findOneAndDelete({ userID, guildID });
                 }
             });
         }
