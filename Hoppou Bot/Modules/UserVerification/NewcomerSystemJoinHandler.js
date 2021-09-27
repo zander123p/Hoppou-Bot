@@ -44,7 +44,6 @@ module.exports = {
                 guildID: member.guild.id,
                 messageID: msg.id,
             });
-
             await log.save();
         });
     },

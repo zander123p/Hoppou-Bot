@@ -7,11 +7,6 @@ module.exports = {
 
         const g = await oldMember.guild.ensure();
 
-        const logs = await newMember.guild.getModuleSetting(this.module, 'logs');
-        const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
-        const c = newMember.guild.channels.cache.get(log.id);
-
         const fetchedLogs = await oldMember.guild.fetchAuditLogs({
             limit: 1,
             type: 'MEMBER_UPDATE',
@@ -36,6 +31,11 @@ module.exports = {
         await g.save();
 
         if (!oldLog) return client.emit('guildMemberRoleUpdate', oldMember, newMember);
+
+        const logs = await newMember.guild.getModuleSetting(this.module, 'logs');
+        const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
+        if (!log) return;
+        const c = newMember.guild.channels.cache.get(log.id);
 
         const me = new MessageEmbed()
             .setColor('#faea70')
