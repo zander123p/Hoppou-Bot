@@ -7,15 +7,16 @@ module.exports = {
 
         const message = interaction.message;
         const msg = await client.GuildNewJoins.findOne({ messageID: message.id });
+
         if (msg) {
             if (await moderator.hasGuildPermission(this.permission)) {
                 if (id === 'accept') {
-                    const member = moderator.guild.members.cache.get(msg.userID);
+                    const member = await moderator.guild.members.fetch(msg.userID);
                     member.roles.add(moderator.guild.roles.cache.get(await moderator.guild.getModuleSetting(this.module, 'newcomer_role')));
                     await client.GuildNewJoins.findOneAndDelete({ messageID: message.id });
                     message.delete();
                 } else if (id === 'deny') {
-                    const member = moderator.guild.members.cache.get(msg.userID);
+                    const member = await moderator.guild.members.fetch(msg.userID);
 
                     const rejectRole = await moderator.guild.getModuleSetting(this.module, 'reject_role');
                     const rejectChannel = await moderator.guild.getModuleSetting(this.module, 'reject_channel');
