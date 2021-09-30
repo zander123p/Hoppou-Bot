@@ -76,7 +76,8 @@ async function ListLogs(interaction) {
 
     const ListedMenu = require('../../../../utils/listedmenu');
     const thisCtx = this;
-    const menu = new ListedMenu(() => { listLogsCallback(interaction, thisCtx); });
+    const menu = new ListedMenu((i) => { listLogsCallback(i, thisCtx); })
+        .setCustomId('logs_list');
 
     channels.forEach(c => {
         const channel = guild.channels.cache.get(c.id);
@@ -180,8 +181,10 @@ async function setLogsCallback(i, c, thisCtx) {
 
 function UpperCase(str) {
     const split = str.split(' ');
-    split.forEach(s => {
-        s[0] = s[0].toUpperCase();
-    });
+    for (let i = 0; i < split.length; i++) {
+        let s = split[i];
+        s = s[0].toUpperCase() + s.substring(1);
+        split[i] = s;
+    }
     return split.join(' ');
 }
