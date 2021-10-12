@@ -66,9 +66,14 @@ Discord.Message.prototype.getUserFromID = async function(mention) {
 client.getVersion = async function(global) {
 	if (global) {
 		const gV = await client.API.PostEndpoint('version');
+		if (!gV) {
+			const info = await client.getInfo();
+			return info.verison;
+		}
 		return gV.version;
 	} else {
 		const info = await client.getInfo();
+		console.log('[getVersion] ' + info);
 		if (!info.version) {
 			const version = await client.API.PostEndpoint('version');
 
@@ -84,6 +89,7 @@ client.getVersion = async function(global) {
 client.getInfo = async function() {
 	const mg = require('mongoose');
 	const info = await client.Info.findOne({ botID: client.user.id });
+	console.log('[getInfo] ' + info);
 	if (!info) {
 		const Info = new client.Info({
 			_id: mg.Types.ObjectId(),
