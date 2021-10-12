@@ -37,15 +37,15 @@ module.exports = {
         }, 1000 * 60 * Math.floor(Math.random() * 61) + 15);
 
         // Bot Updates
-        const globalVersion = await client.getVersion(true);
-        const localVersion = await client.getVersion();
+        // const globalVersion = await client.getVersion(true);
+        // const localVersion = await client.getVersion();
 
-        if (globalVersion !== localVersion) {
-            const info = await client.getInfo();
-            info.version = globalVersion;
-            await info.save();
-            client.emit('botUpdate');
-        }
+        // if (globalVersion !== localVersion) {
+        //     const info = await client.getInfo();
+        //     info.version = globalVersion;
+        //     await info.save();
+        //     client.emit('botUpdate');
+        // }
 
         // Mute log update
         const usersLogs = await client.MuteLogs.find({});
