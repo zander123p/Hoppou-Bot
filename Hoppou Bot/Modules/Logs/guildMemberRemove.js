@@ -39,8 +39,9 @@ module.exports = {
 
         await g.save();
 
-        c.send({ embeds: [me] });
         client.emit('guildMemberKick', member);
+
+        c.send({ embeds: [me] });
 
         await client.GuildUsers.findOneAndDelete({ userID: member.user.id, guildID: member.guild.id });
     },
