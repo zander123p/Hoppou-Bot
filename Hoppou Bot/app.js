@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 require('dotenv').config();
 
 // Basic discord setup
-const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'], intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MEMBERS'] });
+const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'], intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_INVITES'] });
 
 client.commands = new Discord.Collection();
 client.commands.categories = [];
@@ -66,9 +66,14 @@ Discord.Message.prototype.getUserFromID = async function(mention) {
 client.getVersion = async function(global) {
 	if (global) {
 		const gV = await client.API.PostEndpoint('version');
+		if (!gV) {
+			const info = await client.getInfo();
+			return info.verison;
+		}
 		return gV.version;
 	} else {
 		const info = await client.getInfo();
+		console.log('[getVersion] ' + info);
 		if (!info.version) {
 			const version = await client.API.PostEndpoint('version');
 
@@ -84,6 +89,7 @@ client.getVersion = async function(global) {
 client.getInfo = async function() {
 	const mg = require('mongoose');
 	const info = await client.Info.findOne({ botID: client.user.id });
+	console.log('[getInfo] ' + info);
 	if (!info) {
 		const Info = new client.Info({
 			_id: mg.Types.ObjectId(),

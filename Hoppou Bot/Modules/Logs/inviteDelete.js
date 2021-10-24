@@ -19,7 +19,7 @@ module.exports = {
         const me = new MessageEmbed()
             .setColor('#db4444')
             .setTitle('Invite Deleted')
-            .addField('Invite', invite)
+            .addField('Invite', invite.url)
             .setTimestamp();
 
         if (!channelLog) return c.send(me);
@@ -30,7 +30,7 @@ module.exports = {
             .setColor('#db4444')
             .setTitle('Invite Deleted')
             .setAuthor(executor.tag, executor.displayAvatarURL())
-            .addField('Invite', invite)
+            .addField('Invite', invite.url)
             .setTimestamp();
 
         c.send({ embeds: [meU] });

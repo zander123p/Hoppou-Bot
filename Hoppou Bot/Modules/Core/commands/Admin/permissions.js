@@ -198,7 +198,19 @@ async function RemoveGroup(interaction) {
 }
 
 async function RenameGroup(interaction) {
-    return interaction.reply({ content: 'NYI', ephemeral: true });
+    const name = interaction.options.getString('name');
+    const newName = interaction.options.getString('new-name');
+    const guild = interaction.member.guild;
+    const g = await guild.ensure();
+    const group = g.permissionGroups.find(gr => gr.name.toLowerCase() === name.toLowerCase());
+
+    if (!group) return interaction.reply({ content: `There is no group called, '${name}'`, ephemeral: true });
+
+    group.name = newName.toLowerCase();
+
+    await g.save();
+
+    interaction.reply({ content: 'Done!', ephemeral: true });
 }
 
 async function BindRole(interaction) {

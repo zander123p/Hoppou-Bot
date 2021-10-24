@@ -69,7 +69,40 @@ async function SetLogs(interaction) {
 }
 
 async function ListLogs(interaction) {
-    return interaction.reply({ content: 'NYI', ephemeral: true });
+    const guild = interaction.member.guild;
+    const channels = await guild.getModuleSetting(this.module, 'logs');
+
+    if (!channels) return interaction.reply({ content: 'No valid log channels found', ephemeral: true });
+
+    const ListedMenu = require('../../../../utils/listedmenu');
+    const thisCtx = this;
+    const menu = new ListedMenu((i) => { listLogsCallback(i, thisCtx); })
+        .setCustomId('logs_list');
+
+    channels.forEach(c => {
+        const channel = guild.channels.cache.get(c.id);
+        menu.addOption(channel.name.toString(), c.id, '');
+    });
+
+    menu.send(interaction);
+}
+
+async function listLogsCallback(i, thisCtx) {
+    const guild = i.member.guild;
+    const channel = guild.channels.cache.get(i.values[0]);
+    const channels = await guild.getModuleSetting(thisCtx.module, 'logs');
+
+    const ListedEmbed = require('../../../../utils/listedembed');
+
+    const embed = new ListedEmbed()
+        .setColor('#9a3deb')
+        .setTitle(`Listing Logs for, '${channel.name}'`);
+
+    const chnnl = channels.find(c => c.id === channel.id);
+    chnnl.logs.forEach(log => {
+        embed.addField(UpperCase(log), '⠀');
+    });
+    embed.send(i, 10);
 }
 
 async function setLogsCallback(i, c, thisCtx) {
@@ -144,4 +177,14 @@ async function setLogsCallback(i, c, thisCtx) {
     menu.ApplyChanges(i);
     // menu.send(i);
     // i.deferUpdate();
+}
+
+function UpperCase(str) {
+    const split = str.split(' ');
+    for (let i = 0; i < split.length; i++) {
+        let s = split[i];
+        s = s[0].toUpperCase() + s.substring(1);
+        split[i] = s;
+    }
+    return split.join(' ');
 }

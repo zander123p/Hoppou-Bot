@@ -33,6 +33,10 @@ module.exports = {
 					name: 'Pat',
 					value: 'gif_pat',
 				},
+				{
+					name: 'Poke',
+					value: 'gif_poke',
+				},
 			],
 		},
 		{
@@ -63,6 +67,9 @@ module.exports = {
 			break;
 		case 'gif_pat':
 			Pat(interaction, await GetGif('pat'));
+			break;
+		case 'gif_poke':
+			Poke(interaction, await GetGif('poke'));
 			break;
 		}
 	},
@@ -232,6 +239,34 @@ function Pat(interaction, data) {
 	const msg = new Discord.MessageEmbed()
 		.setColor('#9a3deb')
 		.setTitle(`${user.username}, you have been pat by ${author.username}!`)
+		.setImage(data.results[Math.floor(Math.random() * Object.keys(data.results).length)].media[0].gif.url);
+	interaction.reply({ embeds: [msg] });
+}
+
+function Poke(interaction, data) {
+	const Discord = require('discord.js');
+
+	const author = interaction.member.user;
+	const user = interaction.options.get('user').user;
+
+	if (user.id === author.id) {
+		const msg = new Discord.MessageEmbed()
+			.setColor('#9a3deb')
+			.setTitle(`${author.username}, you have poked yourself!`)
+			.setImage(data.results[Math.floor(Math.random() * Object.keys(data.results).length)].media[0].gif.url);
+		return interaction.reply({ embeds: [msg] });
+	}
+	else if (user.id === interaction.client.user.id) {
+		const msg = new Discord.MessageEmbed()
+			.setColor('#9a3deb')
+			.setTitle(`${author.username} poked me!`)
+			.setImage(data.results[Math.floor(Math.random() * Object.keys(data.results).length)].media[0].gif.url);
+		return interaction.reply({ embeds: [msg] });
+	}
+
+	const msg = new Discord.MessageEmbed()
+		.setColor('#9a3deb')
+		.setTitle(`${user.username}, you have been poked by ${author.username}!`)
 		.setImage(data.results[Math.floor(Math.random() * Object.keys(data.results).length)].media[0].gif.url);
 	interaction.reply({ embeds: [msg] });
 }

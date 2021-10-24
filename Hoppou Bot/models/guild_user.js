@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const user_profileSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    guildID: String,
     userID: String,
+    guildID: String,
+    // guilds: [{ guildID: String, data: [mongoose.Schema.Types.Mixed] }],
     permissionGroups: [String],
     messages: Number,
     VCTracker: [{ id: String, mins: Number }],
