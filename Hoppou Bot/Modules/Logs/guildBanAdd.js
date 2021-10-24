@@ -1,9 +1,12 @@
 module.exports = {
     name: 'Member Banned',
     eventType: 'guildBanAdd',
-    async event(client, guild, user, moderator) {
+    async event(client, ban, moderator) {
         const { MessageEmbed } = require('discord.js');
         const { userMention } = require('@discordjs/builders');
+
+        const guild = ban.guild;
+        const user = ban.user;
 
         const logs = await guild.getModuleSetting(this.module, 'logs');
         const lo = logs.find(l => l.logs.includes(this.name.toLowerCase()));
