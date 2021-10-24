@@ -19,7 +19,7 @@ module.exports = {
         const me = new MessageEmbed()
             .setColor('#70f567')
             .setTitle('Invite Created')
-            .addField('Invite', invite)
+            .addField('Invite', invite.url)
             .setTimestamp();
 
         if (!channelLog) return c.send(me);
@@ -30,7 +30,7 @@ module.exports = {
             .setColor('#70f567')
             .setTitle('Invite Created')
             .setAuthor(executor.tag, executor.displayAvatarURL())
-            .addField('Invite', invite)
+            .addField('Invite', invite.url)
             .setTimestamp();
 
         c.send({ embeds: [meU] });
