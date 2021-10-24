@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 require('dotenv').config();
 
 // Basic discord setup
-const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'], intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MEMBERS'] });
+const client = new Discord.Client({ 'partials': ['CHANNEL', 'MESSAGE', 'REACTION'], intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_INVITES'] });
 
 client.commands = new Discord.Collection();
 client.commands.categories = [];
