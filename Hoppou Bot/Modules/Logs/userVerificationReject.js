@@ -11,7 +11,7 @@ module.exports = {
         const c = member.guild.channels.cache.get(log.id);
 
         const meU = new MessageEmbed()
-            .setColor('#70f567')
+            .setColor('#db4444')
             .setTitle('User Rejected')
             .setAuthor(moderator.user.tag, moderator.user.displayAvatarURL())
             .addField('User', userMention(member.user.id))
