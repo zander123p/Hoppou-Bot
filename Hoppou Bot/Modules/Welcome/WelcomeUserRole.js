@@ -4,7 +4,8 @@ module.exports = {
         const chanl = await newMember.guild.getModuleSetting(this.module, 'welcome_channel');
         let msg = await newMember.guild.getModuleSetting(this.module, 'welcome_message');
         const welcomeRole = await newMember.guild.getModuleSetting(this.module, 'welcome_role');
-        if (!chanl || !msg || !welcomeRole) {
+        const joinFlag = await newMember.guild.getModuleSetting(this.module, 'join_flag');
+        if (!chanl || !msg || !welcomeRole || joinFlag) {
             return;
         }
 

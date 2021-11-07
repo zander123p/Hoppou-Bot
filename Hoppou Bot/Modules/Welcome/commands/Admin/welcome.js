@@ -41,6 +41,19 @@ module.exports = {
                 },
             ],
         },
+        {
+            name: 'welcome_on_join',
+            description: 'Should the user be welcomed on join?',
+            type: 'SUB_COMMAND',
+            options: [
+                {
+                    name: 'flag',
+                    description: 'Sets the join flag',
+                    type: 'BOOLEAN',
+                    required: true,
+                },
+            ],
+        },
     ],
     guildOnly: true,
     permission: 'admin.welcome',
@@ -59,6 +72,11 @@ module.exports = {
             const msg = interaction.options.getString('message');
 
             await interaction.member.guild.setModuleSetting(this.module, 'welcome_message', msg);
+            interaction.reply({ content: 'Done!', ephemeral: true });
+        } else if (interaction.options.getSubcommand() === 'welcome_on_join') {
+            const flag = interaction.options.getBoolean('flag');
+
+            await interaction.member.guild.setModuleSetting(this.module, 'join_flag', flag);
             interaction.reply({ content: 'Done!', ephemeral: true });
         }
     },
