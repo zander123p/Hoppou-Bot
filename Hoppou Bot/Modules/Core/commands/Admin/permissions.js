@@ -123,6 +123,11 @@ module.exports = {
                         },
                     ],
                 },
+                {
+                    name: 'reset',
+                    description: 'Removes all permission groups',
+                    type: 'SUB_COMMAND',
+                },
             ],
         },
     ],
@@ -144,6 +149,9 @@ module.exports = {
                     break;
                 case 'list':
                     ListGroups(interaction);
+                    break;
+                case 'reset':
+                    ResetGroups(interaction);
                     break;
             }
         } else if (interaction.options.getSubcommand() === 'edit') {
@@ -221,6 +229,11 @@ async function BindRole(interaction) {
         const group = g.permissionGroups.find(G => G.name === name);
         if (!group) {
             return interaction.reply({ content: 'Please enter a valid group.', ephemeral: true });
+        }
+
+        const rGroup = g.permissionGroups.find(G => G.role === role);
+        if (rGroup) {
+            return interaction.reply({ content: `That role has already been assigned to ${rGroup.name}`, ephemeral: true });
         }
 
         g.permissionGroups[g.permissionGroups.indexOf(group)].role = role.id;
@@ -398,4 +411,15 @@ async function listGroupCallback(i, alt) {
     } else {
         i.deferUpdate();
     }
+}
+
+async function ResetGroups(interaction) {
+    const guild = interaction.member.guild;
+    const g = await guild.ensure();
+
+    g.permissionGroups = [];
+
+    await g.save();
+
+    interaction.reply({ content: 'Done!', ephemeral: true });
 }
