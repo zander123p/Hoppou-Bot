@@ -27,6 +27,8 @@ module.exports = {
         'roleCreate',
         'roleDelete',
         'roleUpdate',
+        'userVerificationAccept',
+        'userVerificationReject',
     ],
     PreEventInit(client, event) {
         console.log(`[ModuleLoader] Registering Log: '${event.name}'...`);
