@@ -89,7 +89,6 @@ client.getVersion = async function(global) {
 client.getInfo = async function() {
 	const mg = require('mongoose');
 	const info = await client.Info.findOne({ botID: client.user.id });
-	console.log('[getInfo] ' + info);
 	if (!info) {
 		const Info = new client.Info({
 			_id: mg.Types.ObjectId(),
