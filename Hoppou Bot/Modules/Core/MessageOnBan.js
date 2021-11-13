@@ -15,8 +15,10 @@ module.exports = {
             .setTitle('You have been banned')
             .setTimestamp()
             .addField('Guild', guild.name)
-            .addField('Reason', reason);
+            .addField('Reason', reason ? reason : 'No reason was given');
 
-        user.createDM().send({ embeds: [embed] });
+        user.createDM().then((c) => {
+            c.send({ embeds: [embed] });
+        });
     },
 };

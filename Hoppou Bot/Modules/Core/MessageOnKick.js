@@ -21,8 +21,10 @@ module.exports = {
             .setTitle('You have been kicked')
             .setTimestamp()
             .addField('Guild', guild.name)
-            .addField('Reason', channelLog.reason);
+            .addField('Reason', channelLog.reason ? channelLog.reason : 'No reason was given');
 
-        user.createDM().send({ embeds: [embed] });
+        user.createDM().then((c) => {
+            c.send({ embeds: [embed] });
+        });
     },
 };
