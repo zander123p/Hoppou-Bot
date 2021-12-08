@@ -73,7 +73,6 @@ client.getVersion = async function(global) {
 		return gV.version;
 	} else {
 		const info = await client.getInfo();
-		console.log('[getVersion] ' + info);
 		if (!info.version) {
 			const version = await client.API.PostEndpoint('version');
 
