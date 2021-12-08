@@ -15,6 +15,7 @@ module.exports = {
                     member.roles.add(moderator.guild.roles.cache.get(await moderator.guild.getModuleSetting(this.module, 'newcomer_role')));
                     await client.GuildNewJoins.findOneAndDelete({ messageID: message.id });
                     message.delete();
+                    client.emit('userVerificationAccept', member, moderator);
                 } else if (id === 'deny') {
                     const member = await moderator.guild.members.fetch(msg.userID);
 
@@ -43,6 +44,7 @@ module.exports = {
 
                     await client.GuildNewJoins.findOneAndDelete({ messageID: message.id });
                     message.delete();
+                    client.emit('userVerificationReject', member, moderator);
                 }
             }
         }

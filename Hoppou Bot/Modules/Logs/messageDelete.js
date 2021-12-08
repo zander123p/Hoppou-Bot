@@ -18,6 +18,24 @@ module.exports = {
             });
 
             const deletionLog = fetchedLogs.entries.first();
+
+            const me = new MessageEmbed()
+                .setColor('#db4444')
+                .setTitle('Unknown Message Deleted')
+                .addField('Message Author', 'Unknown')
+                .addField('Channel', channelMention(deletionLog.extra.channel.id))
+                .setTimestamp();
+
+            const oldLog = guild.oldLogs.find(C => { if(deletionLog.id === C.id) return C; });
+            if (oldLog) return c.send({ embeds: [me] });
+
+            const pos = guild.oldLogs.findIndex(C => { if(C.log === this.name.toLowerCase()) return C; });
+            if (pos < 0) {
+                guild.oldLogs.push({ id: deletionLog.id.toString(), log: this.name.toLowerCase() });
+            } else {
+                guild.oldLogs[pos].id = deletionLog.id.toString();
+            }
+
             const { executor } = deletionLog;
             if (!deletionLog.extra.channel.guild) return;
 

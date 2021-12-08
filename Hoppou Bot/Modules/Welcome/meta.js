@@ -1,6 +1,7 @@
 module.exports = {
     name: 'Welcome',
     events: [
-        'WelcomeUser',
+        'WelcomeUserRole',
+        'WelcomeUserJoin',
     ],
 };

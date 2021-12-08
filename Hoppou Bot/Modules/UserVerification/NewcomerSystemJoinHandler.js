@@ -6,8 +6,11 @@ module.exports = {
             MessageActionRow,
             MessageButton,
         } = require('discord.js');
+
         const chanl = await member.guild.getModuleSetting(this.module, 'newcomer_channel');
-        if (!chanl) {
+        const newcomer_role = await member.guild.getModuleSetting(this.module, 'newcomer_role');
+
+        if (!chanl || !newcomer_role) {
             return;
         }
 

@@ -8,5 +8,8 @@ module.exports = {
         'GuildLeave',
         'Interaction',
         'MessageSent',
+        'KickEmiter',
+        'MessageOnBan',
+        'MessageOnKick',
     ],
 };

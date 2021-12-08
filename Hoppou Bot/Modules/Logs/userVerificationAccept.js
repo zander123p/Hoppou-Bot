@@ -1,7 +1,7 @@
 module.exports = {
-    name: 'Member Leave',
-    eventType: 'guildMemberRemove',
-    async event(client, member) {
+    name: 'User Verified',
+    eventType: 'userVerificationAccept',
+    async event(client, member, moderator) {
         const { MessageEmbed } = require('discord.js');
         const { userMention } = require('@discordjs/builders');
 
@@ -10,13 +10,12 @@ module.exports = {
         if (!log) return;
         const c = member.guild.channels.cache.get(log.id);
 
-        const me = new MessageEmbed()
-            .setColor('#db4444')
-            .setTitle('Member Left')
-            .setAuthor(member.user.tag, member.user.displayAvatarURL())
-            .addField('Member', userMention(member.user.id))
+        const meU = new MessageEmbed()
+            .setColor('#70f567')
+            .setTitle('User Verified')
+            .setAuthor(moderator.user.tag, moderator.user.displayAvatarURL())
+            .addField('User', userMention(member.user.id))
             .setTimestamp();
-
-        c.send({ embeds: [me] });
+        c.send({ embeds: [meU] });
     },
 };

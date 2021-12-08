@@ -141,26 +141,46 @@ module.exports = {
             ],
         },
         {
-            name: 'role',
-            description: 'Set the roles',
-            type: 'SUB_COMMAND',
-            permission: 'admin.moderate',
+            name: 'options',
+            description: 'Set the options for the moderation module',
+            type: 'SUB_COMMAND_GROUP',
             options: [
                 {
                     name: 'role',
-                    description: 'The role to set',
-                    type: 'ROLE',
-                    required: true,
+                    description: 'Set the roles',
+                    type: 'SUB_COMMAND',
+                    permission: 'admin.moderate',
+                    options: [
+                        {
+                            name: 'role',
+                            description: 'The role to set',
+                            type: 'ROLE',
+                            required: true,
+                        },
+                        {
+                            name: 'type',
+                            description: 'Which role it corresponds to',
+                            type: 'STRING',
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'Mute Role',
+                                    value: 'mute_role',
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
-                    name: 'type',
-                    description: 'Which role it corresponds to',
-                    type: 'STRING',
-                    required: true,
-                    choices: [
+                    name: 'message_user',
+                    description: 'The bot will message the user when kicking or banning',
+                    type: 'SUB_COMMAND',
+                    options: [
                         {
-                            name: 'Mute Role',
-                            value: 'mute_role',
+                            name: 'allowed',
+                            description: 'Can the bot message the user',
+                            type: 'BOOLEAN',
+                            required: true,
                         },
                     ],
                 },
@@ -185,6 +205,13 @@ module.exports = {
             await UnmuteUser(interaction, thisCtx);
         } else if (interaction.options.getSubcommand() === 'role') {
             await SetRole(interaction, thisCtx);
+        } else if (interaction.options.getSubcommand() === 'message_user') {
+            const flag = interaction.options.getBoolean('allowed');
+            const guild = interaction.member.guild;
+
+            await guild.setModuleSetting(this.module, 'message_user', flag);
+
+            interaction.reply({ content: 'Done!', ephemeral: true });
         }
     },
 };
