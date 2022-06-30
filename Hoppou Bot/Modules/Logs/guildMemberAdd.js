@@ -6,8 +6,8 @@ module.exports = {
         const { userMention } = require('@discordjs/builders');
 
         const logs = await member.guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
         const c = member.guild.channels.cache.get(log.id);
 
         const me = new MessageEmbed()

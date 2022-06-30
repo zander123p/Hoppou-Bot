@@ -6,8 +6,8 @@ module.exports = {
         const { userMention } = require('@discordjs/builders');
 
         const logs = await member.guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const lo = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!lo) return;
         const c = member.guild.channels.cache.get(lo.id);
 
         const fetchedLogs = await member.guild.fetchAuditLogs({

@@ -7,8 +7,8 @@ module.exports = {
 
         if (oldChannel.type === 'dm') return;
         const logs = await newChannel.guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
         const c = newChannel.guild.channels.cache.get(log.id);
 
         const fetchedLogs = await oldChannel.guild.fetchAuditLogs({

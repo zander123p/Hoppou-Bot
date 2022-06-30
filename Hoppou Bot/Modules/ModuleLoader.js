@@ -31,6 +31,12 @@ function LoadModule(name) {
         });
     }
 
+    if (meta.menus) {
+        meta.menus.forEach(m => {
+            LoadMenuEvent(`../Modules/${name}/${m}.js`, name, meta);
+        });
+    }
+
     LoadModuleCommands(name);
 }
 
@@ -59,6 +65,19 @@ function LoadButtonEvent(path, module, meta) {
     if (meta.PostButtonInit)
         meta.PostButtonInit(client, evt);
     client.buttons.push(evt);
+}
+
+function LoadMenuEvent(path, module, meta) {
+    const evt = require(`${path}`);
+    if (meta.PreMenuInit)
+        meta.PremenuInit(client, evt);
+    console.log(`[ModuleLoader] Registered Module Menu: '${path}'`);
+    evt.module = module;
+    if (evt.permission)
+        AddPermission(evt.permission);
+    if (meta.PostMenuInit)
+        meta.PostMenuInit(client, evt);
+    client.menus.push(evt);
 }
 
 function LoadModuleCommand(cmd, dir, module) {

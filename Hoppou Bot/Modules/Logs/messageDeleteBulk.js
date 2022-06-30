@@ -7,8 +7,8 @@ module.exports = {
 
         const guild = messages.first().guild;
         const logs = await guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
         const c = guild.channels.cache.get(log.id);
 
         const fetchedLogs = await guild.fetchAuditLogs({

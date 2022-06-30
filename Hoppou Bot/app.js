@@ -11,6 +11,7 @@ client.cooldowns = new Discord.Collection();
 client.VCTracker = new Discord.Collection();
 client.modules = [];
 client.buttons = [];
+client.menus = [];
 client.permissions = [];
 client.logs = [];
 
