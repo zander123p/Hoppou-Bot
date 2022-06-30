@@ -6,8 +6,8 @@ module.exports = {
         const { roleMention } = require('@discordjs/builders');
 
         const logs = await newRole.guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
         const c = newRole.guild.channels.cache.get(log.id);
 
         const fetchedLogs = await oldRole.guild.fetchAuditLogs({

@@ -5,8 +5,8 @@ module.exports = {
         const { MessageEmbed } = require('discord.js');
 
         const logs = await emoji.guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
         const c = emoji.guild.channels.cache.get(log.id);
 
         const fetchedLogs = await emoji.guild.fetchAuditLogs({

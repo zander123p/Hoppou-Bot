@@ -15,8 +15,8 @@ module.exports = {
         if (oldMessage.author.bot || !oldMessage.guild) return;
 
         const logs = await oldMessage.guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const log = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!log) return;
         const c = oldMessage.guild.channels.cache.get(log.id);
 
         if (oldMessage.content === newMessage.content)

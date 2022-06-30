@@ -9,8 +9,8 @@ module.exports = {
         const user = ban.user;
 
         const logs = await guild.getModuleSetting(this.module, 'logs');
+        if (!logs) return;
         const lo = logs.find(l => l.logs.includes(this.name.toLowerCase()));
-        if (!lo) return;
         const c = guild.channels.cache.get(lo.id);
 
         const fetchedLogs = await guild.fetchAuditLogs({
